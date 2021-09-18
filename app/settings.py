@@ -173,7 +173,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # :::: Configuration for Digital Ocean Spaces ::::
-#STATICFILES_DIRS = [BASE_DIR / "static",]
+STATICFILES_DIRS = [BASE_DIR / "static",]
 #STATIC_ROOT = BASE_DIR / "staticfiles-cdn" # in production, we want cdn
 #MEDIA_ROOT = BASE_DIR / "staticfiles-cdn" / "uploads"
 #from .cdn.conf import * # noqa

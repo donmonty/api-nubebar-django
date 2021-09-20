@@ -31,12 +31,14 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 DEBUG = os.getenv("DEBUG", "False") == "True"
 #DEBUG = str(os.environ.get('DEBUG'))=='True'
 
-#ENV_ALLOWED_HOST = os.environ.get('DJANGO_ALLOWED_HOST') or None
-#ALLOWED_HOSTS = []
-#if ENV_ALLOWED_HOST is not None:
-#    ALLOWED_HOSTS = [ ENV_ALLOWED_HOST ]
+ENV_ALLOWED_HOST = os.environ.get('DJANGO_ALLOWED_HOST') or None
+ALLOWED_HOSTS = []
+if ENV_ALLOWED_HOST is not None:
+   ALLOWED_HOSTS = [ ENV_ALLOWED_HOST ]
+else:
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+#ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
 # Application definition

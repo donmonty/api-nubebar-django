@@ -25,7 +25,7 @@ urlpatterns = [
     path('api/inventarios/', include('inventarios.urls', namespace='inventarios')),
     path('api/analytics/', include('analytics.urls', namespace='analytics')),
 ]
-
+"""
 if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL,
@@ -33,3 +33,5 @@ if settings.DEBUG:
     )
 
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+"""
+

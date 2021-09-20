@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-
+from django.core.management.utils import get_random_secret_key
 import os
 from pathlib import Path
 
@@ -24,15 +24,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or 'j8go-s#xppcsm%$p@%q5we7u)l^%*z34ulo!o0-h%mx8%@q1-o'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+#SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or 'j8go-s#xppcsm%$p@%q5we7u)l^%*z34ulo!o0-h%mx8%@q1-o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = str(os.environ.get('DEBUG'))=='1'
+DEBUG = os.getenv("DEBUG", "False") == "True"
+#DEBUG = str(os.environ.get('DEBUG'))=='True'
 
-ENV_ALLOWED_HOST = os.environ.get('DJANGO_ALLOWED_HOST') or None
-ALLOWED_HOSTS = []
-if ENV_ALLOWED_HOST is not None:
-    ALLOWED_HOSTS = [ ENV_ALLOWED_HOST ]
+#ENV_ALLOWED_HOST = os.environ.get('DJANGO_ALLOWED_HOST') or None
+#ALLOWED_HOSTS = []
+#if ENV_ALLOWED_HOST is not None:
+#    ALLOWED_HOSTS = [ ENV_ALLOWED_HOST ]
+
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
 # Application definition
@@ -57,6 +61,13 @@ INSTALLED_APPS = [
     'ventas',
     'analytics'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,7 +103,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -102,6 +113,7 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASS'),
     }
 }
+"""
 
 POSTGRES_DB = os.environ.get("POSTGRES_DB")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
@@ -126,6 +138,14 @@ if POSTGRES_READY:
             "PASSWORD": POSTGRES_PASSWORD,
             "HOST": POSTGRES_HOST,
             "PORT": POSTGRES_PORT,
+        }
+    }
+
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
 
@@ -171,6 +191,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 #STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # :::: Configuration for Digital Ocean Spaces ::::

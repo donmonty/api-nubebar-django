@@ -1452,6 +1452,11 @@ class BotellaNuevaSerializer(serializers.ModelSerializer):
             peso_inicial = producto.peso_nueva
             peso_cristal = round(peso_nueva - (capacidad * factor_peso))
 
+        # Si el sat_hash es igual al folio del marbete, folio = sat_hash (botellas legacy)
+        if ((sat_hash[0:2] == 'Nn') or (sat_hash[0:2] == 'Ii')) and (len(sat_hash) == 12):
+            folio = sat_hash
+        else:
+            folio = ''
 
         botella = models.Botella.objects.create(
 
@@ -1464,7 +1469,7 @@ class BotellaNuevaSerializer(serializers.ModelSerializer):
             precio_unitario=precio_unitario,
 
             # Datos del marbete:
-            folio='',
+            folio=folio,
             tipo_marbete='',
             fecha_elaboracion_marbete='',
             lote_produccion_marbete='',
@@ -1955,7 +1960,9 @@ class BotellaUsadaSerializerFolioManual(serializers.ModelSerializer):
             'folio',
             'peso_nueva',
             'peso_inicial',
+            'sat_hash'
         )
+        extra_kwargs = {'sat_hash': {'required': False}}
 
     """
     ---------------------------------------------------------------------------
@@ -2099,6 +2106,7 @@ class BotellaUsadaSerializerFolioManual(serializers.ModelSerializer):
         factor_peso = ingrediente.factor_peso
         peso_cristal = round(peso_nueva - (capacidad * factor_peso))
         estado_botella = '1'
+        sat_hash = validated_data.get('sat_hash')
 
         """
         -----------------------------------------------
@@ -2136,7 +2144,7 @@ class BotellaUsadaSerializerFolioManual(serializers.ModelSerializer):
             fecha_elaboracion_marbete='',
             lote_produccion_marbete='',
             url='',
-            sat_hash='',
+            sat_hash=sat_hash,
 
             # Datos del producto en marbete:
             nombre_marca='',

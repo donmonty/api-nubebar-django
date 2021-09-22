@@ -2884,19 +2884,6 @@ def crear_botella_usada(request):
 
     if request.method == 'POST':
 
-        # Construimos el payload
-        payload = {}
-
-        payload['usuario_alta'] = request.user.id
-        payload['sucursal'] = request.data['sucursal']
-        payload['almacen'] = request.data['almacen']
-        payload['proveedor'] = request.data['proveedor'] 
-        payload['producto'] = request.data['producto']
-        payload['folio'] = request.data['folio']
-        payload['peso_nueva'] = request.data['peso_nueva']
-        payload['peso_inicial'] = request.data['peso_bascula']
-        payload['sat_hash'] = request.data['sat_hash']
-
         """
         ------------------------------------------------------------------------------------------
         Serializamos el payload:
@@ -2909,6 +2896,17 @@ def crear_botella_usada(request):
 
         if 'captura_folio' not in request.data:
 
+            payload = {}
+
+            payload['usuario_alta'] = request.user.id
+            payload['sucursal'] = request.data['sucursal']
+            payload['almacen'] = request.data['almacen']
+            payload['proveedor'] = request.data['proveedor'] 
+            payload['producto'] = request.data['producto']
+            payload['peso_nueva'] = request.data['peso_nueva']
+            payload['peso_inicial'] = request.data['peso_bascula']
+            payload['sat_hash'] = request.data['sat_hash']
+
             serializer = serializers.BotellaUsadaSerializer(data=payload, partial=True)
 
             if serializer.is_valid():
@@ -2920,6 +2918,19 @@ def crear_botella_usada(request):
         # CASO 2: CAPTURA MANUAL
 
         if 'captura_folio' in request.data:
+
+            payload = {}
+
+            payload['usuario_alta'] = request.user.id
+            payload['sucursal'] = request.data['sucursal']
+            payload['almacen'] = request.data['almacen']
+            payload['proveedor'] = request.data['proveedor'] 
+            payload['producto'] = request.data['producto']
+            payload['folio'] = request.data['folio']
+            payload['peso_nueva'] = request.data['peso_nueva']
+            payload['peso_inicial'] = request.data['peso_bascula']
+            payload['sat_hash'] = ''
+
             # Tomamos el folio y eliminamos cualquier guion medio
             payload['folio'] = request.data['folio']
             payload['folio'] = payload['folio'].replace('-', '')

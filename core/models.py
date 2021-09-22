@@ -302,7 +302,7 @@ envase, y precio unitario (Preregistro en la app anterior)
 
 class Producto(models.Model):
 
-	folio 						= models.CharField(max_length=12)
+	folio 						= models.CharField(max_length=12, blank=True)
 	ingrediente 				= models.ForeignKey(Ingrediente, related_name='productos', on_delete=models.CASCADE)
 	
 	# Datos del marbete
@@ -354,7 +354,7 @@ class Botella(models.Model):
 	ESTADOS_BOTELLA = ((NUEVA, 'NUEVA'), (CON_LIQUIDO, 'CON LIQUIDO'), (VACIA, 'VACIA'), (PERDIDA, 'PERDIDA'))
 	
 	# Datos del marbete
-	folio                       = models.CharField(max_length=12, unique=True)
+	folio                       = models.CharField(max_length=12)
 	tipo_marbete                = models.CharField(max_length=255, blank=True)
 	fecha_elaboracion_marbete   = models.CharField(max_length=255, blank=True)
 	lote_produccion_marbete     = models.CharField(max_length=255, blank=True)
@@ -389,7 +389,7 @@ class Botella(models.Model):
 	proveedor 					= models.ForeignKey(Proveedor, related_name='botellas_proveedor', blank=True, null=True, on_delete=models.SET_NULL)
 	ingrediente 				= models.CharField(max_length=255, blank=True)
 	categoria 					= models.CharField(max_length=255, blank=True)
-	
+	sat_hash = models.CharField(max_length=255, blank=True)
 
 	def save(self, *args, **kwargs):
 		
@@ -418,7 +418,7 @@ class Botella(models.Model):
 		nombre_ingrediente = ingrediente.nombre
 		nombre_sucursal = self.sucursal.nombre
 		numero_almacen = self.almacen.numero
-		return 'FOLIO: {} - INGREDIENTE: {} - CAPACIDAD: {} - PRECIO: {} - ESTADO: {} - SUCURSAL: {} - ALMACEN: {}'.format(self.folio, nombre_ingrediente, self.capacidad, self.precio_unitario, self.estado, nombre_sucursal, numero_almacen)
+		return 'FOLIO: {} - HASH: {} - PRODUCTO: {} - ESTADO: {} - SUCURSAL: {} - ALMACEN: {}'.format(self.folio, self.hash, producto.nombre, self.estado, nombre_sucursal, numero_almacen)
 
 """
 --------------------------------------------------------------------------

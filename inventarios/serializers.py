@@ -1693,10 +1693,13 @@ class BotellaNuevaSerializerFolioManual(serializers.ModelSerializer):
             'producto',
             'folio',
             'peso_nueva',
+            'sat_hash'
         )
 
         extra_kwargs = {
             'peso_nueva': {'required': False},
+            'sat_hash': {'required': False},
+            'folio': {'required': False}
         }
 
     """
@@ -1837,6 +1840,7 @@ class BotellaNuevaSerializerFolioManual(serializers.ModelSerializer):
         precio_unitario = producto.precio_unitario
         capacidad = producto.capacidad
         factor_peso = ingrediente.factor_peso
+        sat_hash = validated_data.get('sat_hash')
 
         # Si contamos con el peso de la botella medido con la bascula:
         if peso_nueva is not None:
@@ -1857,6 +1861,9 @@ class BotellaNuevaSerializerFolioManual(serializers.ModelSerializer):
             peso_nueva = producto.peso_nueva
             peso_inicial = producto.peso_nueva
             peso_cristal = round(peso_nueva - (capacidad * factor_peso))
+
+        if sat_hash is None:
+            sat_hash = ''
 
         """
         -----------------------------------------------
@@ -1896,7 +1903,7 @@ class BotellaNuevaSerializerFolioManual(serializers.ModelSerializer):
             fecha_elaboracion_marbete='',
             lote_produccion_marbete='',
             url='',
-            sat_hash='',
+            sat_hash=sat_hash,
 
             # Datos del producto en marbete:
             nombre_marca='',

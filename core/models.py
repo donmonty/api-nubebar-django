@@ -418,7 +418,7 @@ class Botella(models.Model):
 		nombre_ingrediente = ingrediente.nombre
 		nombre_sucursal = self.sucursal.nombre
 		numero_almacen = self.almacen.numero
-		return 'FOLIO: {} - HASH: {} - PRODUCTO: {} - ESTADO: {} - SUCURSAL: {} - ALMACEN: {}'.format(self.folio, self.hash, producto.nombre, self.estado, nombre_sucursal, numero_almacen)
+		return 'FOLIO: {} - HASH: {} - PRODUCTO: {} - ESTADO: {} - SUCURSAL: {} - ALMACEN: {}'.format(self.folio, self.sat_hash, producto.nombre, self.estado, nombre_sucursal, numero_almacen)
 
 """
 --------------------------------------------------------------------------

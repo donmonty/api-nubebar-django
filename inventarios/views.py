@@ -2577,7 +2577,7 @@ def crear_botella_nueva(request):
         payload['almacen'] = request.data['almacen']
         payload['proveedor'] = request.data['proveedor'] 
         payload['producto'] = request.data['producto']
-        payload['folio'] = request.data['folio']
+        payload['sat_hash'] = request.data['sat_hash']
 
         # Si el peso de la botella medido con la bascula viene en el request, lo incluimos en el payload
         if 'peso_nueva' in request.data:
@@ -2613,6 +2613,7 @@ def crear_botella_nueva(request):
 
         if 'captura_folio' in request.data:
             # Tomamos el folio y eliminamos cualquier guion medio
+            payload['folio'] = request.data['folio']
             payload['folio'] = payload['folio'].replace('-', '')
 
             # Si el folio resultante es '', retornamos un error
@@ -2900,6 +2901,7 @@ def crear_botella_usada(request):
 
         if 'captura_folio' in request.data:
             # Tomamos el folio y eliminamos cualquier guion medio
+            payload['folio'] = request.data['folio']
             payload['folio'] = payload['folio'].replace('-', '')
 
             # Si el folio resultante es '', retornamos un error

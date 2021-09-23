@@ -2569,26 +2569,6 @@ def crear_botella_nueva(request):
 
     if request.method == 'POST':
 
-        # Construimos el payload
-        payload = {}
-
-        payload['usuario_alta'] = request.user.id
-        payload['sucursal'] = request.data['sucursal']
-        payload['almacen'] = request.data['almacen']
-        payload['proveedor'] = request.data['proveedor'] 
-        payload['producto'] = request.data['producto']
-        payload['folio'] = request.data['folio']
-
-        # Si el peso de la botella medido con la bascula viene en el request, lo incluimos en el payload
-        if 'peso_nueva' in request.data:
-            
-            payload['peso_nueva'] = request.data['peso_nueva']
-
-        # Si el peso de la botella medido con la bascula no viene en el request, le asignamos None
-        else:
-
-            payload['peso_nueva'] = None
-
         """
         ------------------------------------------------------------------------------------------
         Serializamos el payload:
@@ -2601,6 +2581,24 @@ def crear_botella_nueva(request):
 
         if 'captura_folio' not in request.data:
 
+            # Construimos el payload
+            payload = {}
+
+            payload['usuario_alta'] = request.user.id
+            payload['sucursal'] = request.data['sucursal']
+            payload['almacen'] = request.data['almacen']
+            payload['proveedor'] = request.data['proveedor'] 
+            payload['producto'] = request.data['producto']
+            payload['sat_hash'] = request.data['sat_hash']
+
+            # Si el peso de la botella medido con la bascula viene en el request, lo incluimos en el payload
+            if 'peso_nueva' in request.data:
+                payload['peso_nueva'] = request.data['peso_nueva']
+
+            # Si el peso de la botella medido con la bascula no viene en el request, le asignamos None
+            else:
+                payload['peso_nueva'] = None
+
             serializer = serializers.BotellaNuevaSerializer(data=payload, partial=True)
 
             if serializer.is_valid():
@@ -2612,7 +2610,29 @@ def crear_botella_nueva(request):
         # CASO 2: CAPTURA MANUAL
 
         if 'captura_folio' in request.data:
+
+            # Construimos el payload
+            payload = {}
+
+            payload['usuario_alta'] = request.user.id
+            payload['sucursal'] = request.data['sucursal']
+            payload['almacen'] = request.data['almacen']
+            payload['proveedor'] = request.data['proveedor'] 
+            payload['producto'] = request.data['producto']
+
+            # Si el peso de la botella medido con la bascula viene en el request, lo incluimos en el payload
+            if 'peso_nueva' in request.data:
+                payload['peso_nueva'] = request.data['peso_nueva']
+
+            # Si el peso de la botella medido con la bascula no viene en el request, le asignamos None
+            else:
+                payload['peso_nueva'] = None
+
+            # Seteamos el sat_hash
+            payload['sat_hash'] = ''
+
             # Tomamos el folio y eliminamos cualquier guion medio
+            payload['folio'] = request.data['folio']
             payload['folio'] = payload['folio'].replace('-', '')
 
             # Si el folio resultante es '', retornamos un error
@@ -2864,18 +2884,6 @@ def crear_botella_usada(request):
 
     if request.method == 'POST':
 
-        # Construimos el payload
-        payload = {}
-
-        payload['usuario_alta'] = request.user.id
-        payload['sucursal'] = request.data['sucursal']
-        payload['almacen'] = request.data['almacen']
-        payload['proveedor'] = request.data['proveedor'] 
-        payload['producto'] = request.data['producto']
-        payload['folio'] = request.data['folio']
-        payload['peso_nueva'] = request.data['peso_nueva']
-        payload['peso_inicial'] = request.data['peso_bascula']
-
         """
         ------------------------------------------------------------------------------------------
         Serializamos el payload:
@@ -2888,6 +2896,17 @@ def crear_botella_usada(request):
 
         if 'captura_folio' not in request.data:
 
+            payload = {}
+
+            payload['usuario_alta'] = request.user.id
+            payload['sucursal'] = request.data['sucursal']
+            payload['almacen'] = request.data['almacen']
+            payload['proveedor'] = request.data['proveedor'] 
+            payload['producto'] = request.data['producto']
+            payload['peso_nueva'] = request.data['peso_nueva']
+            payload['peso_inicial'] = request.data['peso_bascula']
+            payload['sat_hash'] = request.data['sat_hash']
+
             serializer = serializers.BotellaUsadaSerializer(data=payload, partial=True)
 
             if serializer.is_valid():
@@ -2899,7 +2918,21 @@ def crear_botella_usada(request):
         # CASO 2: CAPTURA MANUAL
 
         if 'captura_folio' in request.data:
+
+            payload = {}
+
+            payload['usuario_alta'] = request.user.id
+            payload['sucursal'] = request.data['sucursal']
+            payload['almacen'] = request.data['almacen']
+            payload['proveedor'] = request.data['proveedor'] 
+            payload['producto'] = request.data['producto']
+            payload['folio'] = request.data['folio']
+            payload['peso_nueva'] = request.data['peso_nueva']
+            payload['peso_inicial'] = request.data['peso_bascula']
+            payload['sat_hash'] = ''
+
             # Tomamos el folio y eliminamos cualquier guion medio
+            payload['folio'] = request.data['folio']
             payload['folio'] = payload['folio'].replace('-', '')
 
             # Si el folio resultante es '', retornamos un error

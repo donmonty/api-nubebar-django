@@ -233,8 +233,22 @@ class BotellaItemInspeccionSerializer(serializers.ModelSerializer):
         )
 
 #------------------------------------------------------------------
+class AlmacenSerializer(serializers.ModelSerializer):
+    """ Despliega un Almacen """
+     
+    class Meta:
+        model = models.Almacen
+        fields = (
+            'id',
+            'nombre',
+            'numero',
+        )
+
+#------------------------------------------------------------------
 class SucursalSerializer(serializers.ModelSerializer):
     """ Despliega una sucursal, excepto el CLiente """
+
+    almacenes = AlmacenSerializer(read_only=True, many=True)
 
     class Meta:
         model = models.Sucursal
@@ -248,19 +262,8 @@ class SucursalSerializer(serializers.ModelSerializer):
             'latitud',
             'longitud',
             'codigo_postal',
-            'slug'
-        )
-
-#------------------------------------------------------------------
-class AlmacenSerializer(serializers.ModelSerializer):
-    """ Despliega un Almacen """
-     
-    class Meta:
-        model = models.Almacen
-        fields = (
-            'id',
-            'nombre',
-            'numero',
+            'slug',
+            'almacenes'
         )
 
 #------------------------------------------------------------------

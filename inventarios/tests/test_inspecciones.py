@@ -2041,15 +2041,16 @@ class InspeccionesTests(TestCase):
         # Serializamos las sucursales
         serializer = SucursalSerializer(sucursales_usuario, many=True)
 
-        #print('::: SERIALIZER DATA :::')
-        #print(serializer.data)
+        # print('::: SERIALIZER DATA :::')
+        # print(serializer.data)
+        # print(json.dumps(serializer.data))
 
         # Creamos el request
         url = reverse('inventarios:get-lista-sucursales')
         response = self.client.get(url)
 
-        #print('::: RESPONSE DATA :::')
-        #print(response.data)
+        # print('::: RESPONSE DATA :::')
+        # print(response.data)
 
         # Checamos que el request sea exitoso
         self.assertEqual(response.status_code, status.HTTP_200_OK)

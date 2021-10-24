@@ -34,6 +34,7 @@ urlpatterns = [
     path('get-detalle-botella-inspeccion/inspeccion/<int:inspeccion_id>/folio/<str:folio_id>', views.detalle_botella_inspeccion, name='get-detalle-botella-inspeccion'),
     path('get-lista-sucursales', views.lista_sucursales, name='get-lista-sucursales'),
     path('get-lista-sucursales-almacenes', views.lista_sucursales_almacenes, name='get-lista-sucursales-almacenes'),
+    path('get-almacenes/sucursal/<int:sucursal_id>', views.lista_almacenes, name='get-almacenes'),
     path('update-peso-botella/', views.update_peso_botella, name='update-peso-botella'),
     path('cerrar-inspeccion/', views.cerrar_inspeccion, name='cerrar-inspeccion'),
     path('update-botella-nueva-vacia/', views.update_botella_nueva_vacia, name='update-botella-nueva-vacia'),

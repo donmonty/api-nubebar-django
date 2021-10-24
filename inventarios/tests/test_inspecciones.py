@@ -10,6 +10,7 @@ from rest_framework import serializers
 
 from core import models
 from inventarios.serializers import (
+                                        AlmacenSerializer,
                                         ItemInspeccionPostSerializer,
                                         InspeccionPostSerializer,
                                         InspeccionDetalleSerializer,
@@ -2089,6 +2090,36 @@ class InspeccionesTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Checamos que los datos del response y los datos del serializer sean iguales
         self.assertEqual(response.data, serializer.data)
+
+    #-----------------------------------------------------------------------------
+    def test_get_almacenes(self):
+        """Testear que retorna la lista de almacenes asociados a una sucursal"""
+
+        atomic_thai = models.Sucursal.objects.create(nombre='ATOMIC-THAI', cliente=self.operadora_magno)
+        barra_1_atomic = models.Almacen.objects.create(nombre='BARRA 1', numero=1, sucursal=atomic_thai)
+        barra_2_atomic = models.Almacen.objects.create(nombre='BARRA 2', numero=2, sucursal=atomic_thai)
+        serializer_1 = AlmacenSerializer(barra_1_atomic)
+        serializer_2 = AlmacenSerializer(barra_2_atomic)
+
+        url = reverse('inventarios:get-almacenes', args=[atomic_thai.id])
+        response = self.client.get(url)
+        #json_response = json.dumps(response.data)
+        #print(json_response)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['data']), 2)
+        self.assertEqual(serializer_1.data, response.data['data'][0])
+        self.assertEqual(serializer_2.data, response.data['data'][1])
+
+    #-----------------------------------------------------------------------------
+    def test_get_almacenes_error(self):
+        """Testear que retorna error si la sucursal de los almacenes no existe"""
+
+        url = reverse('inventarios:get-almacenes', args=[100])
+        response = self.client.get(url)
+        # print(json.dumps(response.data))
+
+        self.assertEqual(response.data['status'], 'error')
 
 
     #-----------------------------------------------------------------------------

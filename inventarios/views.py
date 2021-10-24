@@ -1094,6 +1094,37 @@ def lista_sucursales_almacenes(request):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+"""
+-----------------------------------------------------------------------------
+Retorna la lista de almacenes de una sucursal
+-----------------------------------------------------------------------------
+"""
+@api_view(['GET'],)
+@permission_classes((IsAuthenticated,))
+@authentication_classes((TokenAuthentication,))
+def lista_almacenes(request, sucursal_id):
+    
+    if request.method == 'GET':
+
+        try:     
+            location = models.Sucursal.objects.get(pk=sucursal_id)
+            almacenes = location.almacenes.all()
+            serializer = serializers.AlmacenSerializer(almacenes, many=True)
+            response = {
+                'status': 'OK',
+                'data': serializer.data
+            }
+            return Response(response)
+
+        except ObjectDoesNotExist:
+            response = {
+                'status': 'error',
+                'message': 'Storage area does not exist'
+            }
+            return Response(response)
+
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 """
 -----------------------------------------------------------------------------

@@ -187,7 +187,8 @@ class InspeccionesTests(TestCase):
             usuario_alta=self.usuario,
             sucursal=self.magno_brasserie,
             almacen=self.barra_1,
-            proveedor=self.vinos_america
+            proveedor=self.vinos_america,
+            sat_hash='Ii0000000001'
         )
 
         self.botella_herradura_blanco = models.Botella.objects.create(
@@ -198,7 +199,8 @@ class InspeccionesTests(TestCase):
             usuario_alta=self.usuario,
             sucursal=self.magno_brasserie,
             almacen=self.barra_1,
-            proveedor=self.vinos_america
+            proveedor=self.vinos_america,
+            sat_hash='Nn0000000001'
         )
 
         # Creamos una botella de Herradura Blanco VACIA
@@ -211,7 +213,8 @@ class InspeccionesTests(TestCase):
             sucursal=self.magno_brasserie,
             almacen=self.barra_1,
             proveedor=self.vinos_america,
-            estado='0'
+            estado='0',
+            sat_hash='Nn0000000002'
         )
 
        
@@ -1858,11 +1861,11 @@ class InspeccionesTests(TestCase):
         # Hacemos el request
         parametros = {
             'inspeccion_id': inspeccion_1.id,
-            'folio_id': self.botella_licor43.folio
+            'sat_hash': self.botella_licor43.sat_hash
         }
         url = reverse('inventarios:get-detalle-botella-inspeccion', kwargs=parametros)
         response = self.client.get(url)
-        json_response = json.dumps(response.data)
+        #json_response = json.dumps(response.data)
 
         #print('::: RESPONSE DATA :::')
         #print(response.data)
@@ -1908,7 +1911,7 @@ class InspeccionesTests(TestCase):
         # Hacemos el request
         parametros = {
             'inspeccion_id': inspeccion_1.id,
-            'folio_id': self.botella_licor43.folio
+            'sat_hash': self.botella_licor43.sat_hash
         }
         url = reverse('inventarios:get-detalle-botella-inspeccion', kwargs=parametros)
         response = self.client.get(url)
@@ -1956,7 +1959,7 @@ class InspeccionesTests(TestCase):
         # Hacemos el request
         parametros = {
             'inspeccion_id': inspeccion_1.id,
-            'folio_id': self.botella_herradura_blanco.folio
+            'sat_hash': self.botella_herradura_blanco.sat_hash
         }
         url = reverse('inventarios:get-detalle-botella-inspeccion', kwargs=parametros)
         response = self.client.get(url)
@@ -1990,6 +1993,7 @@ class InspeccionesTests(TestCase):
             almacen=self.barra_1,
             proveedor=self.vinos_america,
             nombre_marca='LICOR 43',
+            sat_hash=folio_custom
         ) 
 
         # Definimos el historial de inspecciones de nuestra botella de Licor 43
@@ -2018,13 +2022,13 @@ class InspeccionesTests(TestCase):
         # Hacemos el request
         parametros = {
             'inspeccion_id': inspeccion_1.id,
-            'folio_id': '1'
+            'sat_hash': '1'
         }
         url = reverse('inventarios:get-detalle-botella-inspeccion', kwargs=parametros)
         response = self.client.get(url)
 
         #print('::: RESPONSE DATA :::')
-        #print(response.data)        
+        # print(json.dumps(response.data))        
 
         # Checamos que el request sea exitoso
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -1011,22 +1011,22 @@ Inspección en curso, se notifica que la botella no es parte de la Inpección.
 @api_view(['GET'],)
 @permission_classes((IsAuthenticated,))
 @authentication_classes((TokenAuthentication,))
-def detalle_botella_inspeccion(request, inspeccion_id, folio_id):
+def detalle_botella_inspeccion(request, inspeccion_id, sat_hash):
 
     if request.method == 'GET':
 
         inspeccion_id = int(inspeccion_id)
 
         # Si se trata de un folio custom, le adjuntamos el numero de la sucursal
-        if re.match('^[0-9]*$', folio_id):
+        if re.match('^[0-9]*$', sat_hash):
 
             inspeccion = models.Inspeccion.objects.get(id=inspeccion_id)
             sucursal_id = str(inspeccion.sucursal.id)
-            folio_id = sucursal_id + folio_id
+            folio_id = sucursal_id + sat_hash
 
         # Checamos que la botella escaneada pertenezca a la Inspección en curso
-        if models.ItemInspeccion.objects.filter(inspeccion__id=inspeccion_id, botella__folio=folio_id).exists():
-            item_inspeccion = models.ItemInspeccion.objects.get(inspeccion__id=inspeccion_id, botella__folio=folio_id)
+        if models.ItemInspeccion.objects.filter(inspeccion__id=inspeccion_id, botella__sat_hash=sat_hash).exists():
+            item_inspeccion = models.ItemInspeccion.objects.get(inspeccion__id=inspeccion_id, botella__sat_hash=sat_hash)
              
             # Si la botella escaneada no ha sido inspeccionada, mostramos su ficha técnica
             if item_inspeccion.inspeccionado == False:
@@ -1039,7 +1039,7 @@ def detalle_botella_inspeccion(request, inspeccion_id, folio_id):
 
         # Si la botella no pertenece a la Inspección en curso, notificamos al usuario
         else:
-            return Response({'mensaje': 'Esta botella no es parte de la inspección.'})
+            return Response({'mensaje': 'Esta botella no es parte de la inspeccion.'})
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

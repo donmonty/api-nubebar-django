@@ -1039,7 +1039,7 @@ def detalle_botella_inspeccion(request, inspeccion_id, sat_hash):
 
         # Si la botella no pertenece a la Inspección en curso, notificamos al usuario
         else:
-            return Response({'mensaje': 'Esta botella no es parte de la inspeccion.'})
+            return Response(status=status.HTTP_404_NOT_FOUND, data={'mensaje': 'Esta botella no es parte de la inspeccion.'})
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -2108,22 +2108,22 @@ Endpoint para consultar el detalle de una Botella del inventario
 @api_view(['GET'],)
 @permission_classes((IsAuthenticated,))
 @authentication_classes((TokenAuthentication,))
-def consultar_botella(request, folio_id):
+def consultar_botella(request, sat_hash):
 
     if request.method == 'GET':
 
-        folio = folio_id
+        # folio = folio_id
 
         # Checamos que el folio esté registrado en la base de datos
         try:
-            botella = models.Botella.objects.get(folio=folio)
+            botella = models.Botella.objects.get(sat_hash=sat_hash)
 
         except ObjectDoesNotExist:
             mensaje = {'mensaje': 'Esta botella no está registrada en el inventario.'}
-            return Response(mensaje)
+            return Response(data=mensaje, status=status.HTTP_404_NOT_FOUND)
 
         else:
-            botella = models.Botella.objects.get(folio=folio)
+            botella = models.Botella.objects.get(sat_hash=sat_hash)
 
             # Serializamos la botella
             serializer = serializers.BotellaConsultaSerializer(botella)

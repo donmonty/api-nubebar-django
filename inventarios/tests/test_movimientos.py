@@ -275,7 +275,8 @@ class MovimientosTests(TestCase):
             usuario_alta=self.usuario,
             sucursal=self.magno_brasserie,
             almacen=self.barra_1,
-            proveedor=self.vinos_america
+            proveedor=self.vinos_america,
+            sat_hash='Ii0000000001'
         )
 
         self.botella_herradura_blanco = models.Botella.objects.create(
@@ -286,7 +287,8 @@ class MovimientosTests(TestCase):
             usuario_alta=self.usuario,
             sucursal=self.magno_brasserie,
             almacen=self.barra_1,
-            proveedor=self.vinos_america
+            proveedor=self.vinos_america,
+            sat_hash='Nn0000000001'
         )
 
         # Creamos una botella de Herradura Blanco VACIA
@@ -299,7 +301,8 @@ class MovimientosTests(TestCase):
             sucursal=self.magno_brasserie,
             almacen=self.barra_1,
             proveedor=self.vinos_america,
-            estado='0'
+            estado='0',
+            sat_hash='Nn0000000002'
         )
 
         self.botella_siete_leguas_blanco_1000 = models.Botella.objects.create(
@@ -314,6 +317,7 @@ class MovimientosTests(TestCase):
             nombre_marca='Siete Leguas',
             tipo_producto="Tequila joven o blanco 100{} agave".format('%'),
             fecha_envasado='11-07-2019',
+            sat_hash='Nn0000000003'
         )
 
         self.botella_larios = models.Botella.objects.create(
@@ -328,6 +332,7 @@ class MovimientosTests(TestCase):
             nombre_marca='LARIOS',
             tipo_producto="Ginebra",
             fecha_importacion='11-07-2019',
+            sat_hash='Ii0000000002'
         )
 
         
@@ -1917,21 +1922,19 @@ class MovimientosTests(TestCase):
         - Testear que se consulta el detalle de la botella OK
         """
 
-        folio = self.botella_licor43.folio
+        sat_hash = self.botella_licor43.sat_hash
 
         # Serializamos la botella que luego cotejaremos en el response
         serializer = BotellaConsultaSerializer(self.botella_licor43)
 
-
         # Construimos el request
-        url = reverse('inventarios:consultar-botella', args=[folio])
+        url = reverse('inventarios:consultar-botella', args=[sat_hash])
         response = self.client.get(url)
-        json_response = json.dumps(response.data)
+        # json_response = json.dumps(response.data)
 
         #print('::: RESPONSE DATA :::')
         #print(response.data)
         #print(json_response)
-
 
         # Checamos el status del response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1946,15 +1949,17 @@ class MovimientosTests(TestCase):
         - Testear cuando se consulta una botella no registrada
         """
 
-        folio = 'Ii0763516458'
+        sat_hash = 'Ii0763516458'
 
         # Construimos el request
-        url = reverse('inventarios:consultar-botella', args=[folio])
+        url = reverse('inventarios:consultar-botella', args=[sat_hash])
         response = self.client.get(url)
 
         #print('::: RESPONSE DATA :::')
         #print(response.data)
 
+        # Checamos el status del response
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         # Checamos que el los datos del response sean iguales a los del serializer
         self.assertEqual(response.data['mensaje'], 'Esta botella no está registrada en el inventario.')
 

@@ -1968,9 +1968,9 @@ class InspeccionesTests(TestCase):
         #print(response.data)
 
         # Checamos que el request sea exitoso
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         # Checamos que los datos del response y los datos del serializer sean iguales
-        self.assertEqual(response.data['mensaje'], 'Esta botella no es parte de la inspección.')
+        self.assertEqual(response.data['mensaje'], 'Esta botella no es parte de la inspeccion.')
 
 
     #-----------------------------------------------------------------------------

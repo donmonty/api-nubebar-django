@@ -986,11 +986,11 @@ de inspecciones
 @api_view(['GET'],)
 @permission_classes((IsAuthenticated,))
 @authentication_classes((TokenAuthentication,))
-def lista_inspecciones_botella(request, folio_id):
+def lista_inspecciones_botella(request, sat_hash):
 
     if request.method == 'GET':
 
-        botella = get_object_or_404(models.Botella, folio=folio_id)
+        botella = get_object_or_404(models.Botella, sat_hash=sat_hash)
         serializer = serializers.BotellaItemInspeccionSerializer(botella)
         return Response(serializer.data)
 

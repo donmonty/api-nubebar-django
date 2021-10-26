@@ -1818,12 +1818,12 @@ class InspeccionesTests(TestCase):
         #print(serializer.data)
 
         # Hacemos el request
-        url = reverse('inventarios:get-inspecciones-botella', args=[self.botella_licor43.folio])
+        url = reverse('inventarios:get-inspecciones-botella', args=[self.botella_licor43.sat_hash])
         response = self.client.get(url)
-        json_response = json.dumps(response.data)
+        # json_response = json.dumps(response.data)
         #print('::: RESPONSE DATA :::')
         #print(response.data)
-        #print(json_response)
+        # print(json_response)
 
         # Checamos que el request sea exitoso
         self.assertEqual(response.status_code, status.HTTP_200_OK)

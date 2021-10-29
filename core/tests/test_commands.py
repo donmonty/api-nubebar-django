@@ -3,12 +3,13 @@ from unittest.mock import patch
 from django.core.management import call_command
 from django.db.utils import OperationalError
 from django.test import TestCase
-from django.utils.six import StringIO
+from io import StringIO
 from django.core.management.base import CommandError
 from django.core.exceptions import ObjectDoesNotExist
 
 import pandas as pd
 import json
+import os
 import gspread
 from gspread import GSpreadException, SpreadsheetNotFound
 from core import models
@@ -259,6 +260,39 @@ class CommandTests(TestCase):
         # Checamos que se levantan las excepciones esperadas
         with self.assertRaises((ObjectDoesNotExist, CommandError)):
             call_command('add_products', url, sucursal_id, stdout=out)
+
+    
+    @patch('core.management.commands.add_categories_ingredients.pd.read_csv')
+    def test_crear_ingredientes_ok(self, mock_df_ingredientes):
+        """ Testear que se crean todos los ingredientes contenidos en el archivo INGREDIENTES.CSV """
+
+        # Creamos un dataframe con ingredientes para el test
+        ingredientes = {
+            'nombre': ['RED POTION', 'BLUE POTION', 'GREEN POTION'],
+            'codigo': ['POTI001', 'POTI002', 'POTI003'],
+            'categoria': ['WHISKY', 'WHISKY', 'WHISKY'],
+            'factor_peso': [1, 1, 1]
+        }
+        dataframe_ingredientes = pd.DataFrame(ingredientes)
+
+        # Creamos un mock del command
+        mock_df_ingredientes.return_value = dataframe_ingredientes
+        csv_file = 'INGREDIENTES.csv'
+
+        out = StringIO()
+        call_command('add_categories_ingredients', csv_file, stdout=out)
+
+        self.assertIn('Operacion exitosa!', out.getvalue())
+
+    
+    def test_crear_ingredientes_error(self):
+        """ Testear que hay un error cuando no se encuentra el archivo csv """
+
+        out = StringIO()
+        
+        call_command('add_categories_ingredients', 'ERROR.csv', stdout=out)
+        
+        self.assertIn('Hubo un error!', out.getvalue())
 
     
     # #@patch('core.management.commands.add_products.gspread.authorize')

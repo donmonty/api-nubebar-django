@@ -41,7 +41,7 @@ class Command(BaseCommand):
                     ingrediente = models.Ingrediente.objects.get(codigo=codigo_ingrediente)
 
                 except ObjectDoesNotExist:
-                    lista_ingredientes_error.append(codigo_ingrediente)
+                    lista_ingredientes_error.append((codigo_barras, nombre_marca, codigo_ingrediente))
                     self.stdout.write(self.style.WARNING('El ingrediente {} no existe en la base de datos!\n'.format(codigo_ingrediente)))
 
                 # Si el ingrediente existe creamos el blueprint
@@ -51,7 +51,7 @@ class Command(BaseCommand):
                     # Convertimos 'capacidad' a int
                     capacidad = int(capacidad)
 
-                    if  np.isnan(peso_nueva) or (int(peso_nueva) == 0):
+                    if  (pd.isna(peso_nueva) or (int(peso_nueva) == 0)) or (pd.isna(peso_cristal) or (int(peso_cristal) == 0))  :
                         peso_nueva = None
                         peso_cristal = None
 
@@ -89,20 +89,20 @@ class Command(BaseCommand):
 
                     contador = contador + 1
 
-                    self.stdout.write(self.style.SUCCESS('---------------------------------------------------\n'))
-                    self.stdout.write(self.style.SUCCESS('ALTA DE BLUEPRINTS TERMINADA\n'))
-                    self.stdout.write(self.style.SUCCESS('---------------------------------------------------\n'))
-                    self.stdout.write(self.style.SUCCESS('Se registraron un total de {} blueprints con exito\n'.format(contador)))
-                    self.stdout.write(self.style.WARNING('Se generaron {} errores causados por ingredientes no registrados\n'.format(len(lista_ingredientes_error))))
+            self.stdout.write(self.style.SUCCESS('---------------------------------------------------\n'))
+            self.stdout.write(self.style.SUCCESS('ALTA DE BLUEPRINTS TERMINADA\n'))
+            self.stdout.write(self.style.SUCCESS('---------------------------------------------------\n'))
+            self.stdout.write(self.style.SUCCESS('Se registraron un total de {} blueprints con exito\n'.format(contador)))
+            self.stdout.write(self.style.WARNING('Se generaron {} errores causados por ingredientes no registrados\n'.format(len(lista_ingredientes_error))))
 
-                    # Si hay errores por ingredientes no registrados, lisar los blueprints afectados
-                    if len(lista_ingredientes_error) > 0:
-                        self.stdout.write(self.style.ERROR('---------------------------------------------------\n'))
-                        self.stdout.write(self.style.ERROR('---------------------------------------------------\n'))
-                        self.stdout.write(self.style.ERROR('BLUEPRINTS CON ERRORES\n'))
-                        self.stdout.write(self.style.ERROR('---------------------------------------------------\n'))
-                        self.stdout.write(self.style.ERROR('---------------------------------------------------\n'))
+            # Si hay errores por ingredientes no registrados, lisar los blueprints afectados
+            if len(lista_ingredientes_error) > 0:
+                self.stdout.write(self.style.ERROR('---------------------------------------------------\n'))
+                self.stdout.write(self.style.ERROR('---------------------------------------------------\n'))
+                self.stdout.write(self.style.ERROR('BLUEPRINTS CON ERRORES\n'))
+                self.stdout.write(self.style.ERROR('---------------------------------------------------\n'))
+                self.stdout.write(self.style.ERROR('---------------------------------------------------\n'))
 
-                        for item in lista_ingredientes_error:
-                            self.stdout.write(self.style.ERROR('---- > {}\n'.format(item)))
+                for item in lista_ingredientes_error:
+                    self.stdout.write(self.style.ERROR('---- > {}\n'.format(item)))
 

@@ -9,22 +9,7 @@ from core import models
 
  # Definimos los nombres de las worksheets que contienen los items a registrar
 SHEETS_RECETAS = [
-'BRANDY',
-'COGNAC',
-'LICOR',
-'MEZCAL',
-'RON',
-'TEQUILA',
-'VODKA',
-'WHISKY',
-'BRANDY-BOTELLAS',
-'COGNAC-BOTELLAS',
-'LICOR-BOTELLAS',
-'MEZCAL-BOTELLAS',
-'RON-BOTELLAS',
-'TEQUILA-BOTELLAS',
-'VODKA-BOTELLAS',
-'WHISKY-BOTELLAS'
+    'TODO'
 ]
 
 creds = None
@@ -97,6 +82,8 @@ class Command(BaseCommand):
                     # Si hubo items que no se pudieron registrar, notificarle al usuario
                     if registros['errores']['cantidad'] != 0:
                         errores = registros['errores']['items']
-                        self.stdout.write(self.style.WARNING('Los siguientes items no se registraron: %s' % errores ))
+                        self.stdout.write(self.style.WARNING('Los siguientes items no se registraron:'))
+                        for item in errores:
+                            self.stdout.write(self.style.WARNING('--> {}\n'.format(item)))
         
 

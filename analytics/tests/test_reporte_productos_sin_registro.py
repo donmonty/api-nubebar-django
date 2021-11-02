@@ -187,7 +187,7 @@ class AnalyticsTests(TestCase):
         reporte = r_sin_registro.get_productos_sin_registro(self.magno_brasserie)
 
         #print('::: TEST - COSTO STOCK :::')
-        #print(reporte)
+        print(reporte)
 
         # Checamos que el status del reporte sea 'success'
         self.assertEqual(reporte['status'], 'success')

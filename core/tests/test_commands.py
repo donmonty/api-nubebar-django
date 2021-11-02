@@ -3,12 +3,14 @@ from unittest.mock import patch
 from django.core.management import call_command
 from django.db.utils import OperationalError
 from django.test import TestCase
-from django.utils.six import StringIO
+from io import StringIO
 from django.core.management.base import CommandError
 from django.core.exceptions import ObjectDoesNotExist
+from numpy import NaN
 
 import pandas as pd
 import json
+import os
 import gspread
 from gspread import GSpreadException, SpreadsheetNotFound
 from core import models
@@ -261,6 +263,122 @@ class CommandTests(TestCase):
             call_command('add_products', url, sucursal_id, stdout=out)
 
     
+    @patch('core.management.commands.add_categories_ingredients.pd.read_csv')
+    def test_crear_ingredientes_ok(self, mock_df_ingredientes):
+        """ Testear que se crean todos los ingredientes contenidos en el archivo INGREDIENTES.CSV """
+
+        # Creamos un dataframe con ingredientes para el test
+        ingredientes = {
+            'nombre': ['RED POTION', 'BLUE POTION', 'GREEN POTION'],
+            'codigo': ['POTI001', 'POTI002', 'POTI003'],
+            'categoria': ['WHISKY', 'WHISKY', 'WHISKY'],
+            'factor_peso': [1, 1, 1]
+        }
+        dataframe_ingredientes = pd.DataFrame(ingredientes)
+
+        # Creamos un mock del command
+        mock_df_ingredientes.return_value = dataframe_ingredientes
+        csv_file = 'INGREDIENTES.csv'
+
+        out = StringIO()
+        call_command('add_categories_ingredients', csv_file, stdout=out)
+
+        self.assertIn('Operacion exitosa!', out.getvalue())
+
+    
+    def test_crear_ingredientes_error(self):
+        """ Testear que hay un error cuando no se encuentra el archivo csv """
+
+        out = StringIO()
+        call_command('add_categories_ingredients', 'ERROR.csv', stdout=out)
+        self.assertIn('Hubo un error!', out.getvalue())
+
+    
+    @patch('core.management.commands.seed_blueprints.pd.read_csv')
+    def test_seed_blueprints_ok(self, mock_dataframe):
+        """ Testear que se crean los blueprints en el archivo BLUEPRINTS.CSV"""
+
+        # Creamos un mock dataframe para el test
+        data = {
+            'codigo_barras': ['3662042003240', '7502276853548'],
+            'nombre_marca': ['RED POTION 750', 'BLUE POTION 750'],
+            'codigo_ingrediente': ['LICO001', 'LICO001'],
+            'capacidad': [750, 750],
+            'precio_unitario': [100, 100],
+            'peso_cristal': [452, 452],
+            'peso_nueva': [1200, 1200]
+        }
+
+        df_blueprints = pd.DataFrame(data)
+        mock_dataframe.return_value = df_blueprints
+        out = StringIO()
+        call_command('seed_blueprints', 'BLUEPRINTS.csv', stdout=out)
+        blueprints = models.Producto.objects.all()
+
+        self.assertIn('ALTA DE BLUEPRINTS TERMINADA', out.getvalue())
+        self.assertEqual(blueprints.count(), 2)
+
+    
+    @patch('core.management.commands.seed_blueprints.pd.read_csv')
+    def test_seed_blueprints_pesos(self, mock_dataframe):
+        """ Testear el manejo de pesos indefinidos"""
+
+        data = {
+           'codigo_barras': ['3662042003240', '7502276853548'],
+            'nombre_marca': ['RED POTION 750', 'BLUE POTION 750'],
+            'codigo_ingrediente': ['LICO001', 'LICO001'],
+            'capacidad': [750, 750],
+            'precio_unitario': [100, 100],
+            'peso_cristal': [452, 452],
+            'peso_nueva': [0, NaN]
+        }
+
+        df_blueprints = pd.DataFrame(data)
+        mock_dataframe.return_value = df_blueprints
+        out = StringIO()
+        call_command('seed_blueprints', 'BLUEPRINTS.csv', stdout=out)
+
+        blueprint_1 = models.Producto.objects.get(codigo_barras='3662042003240')
+        blueprint_2 = models.Producto.objects.get(codigo_barras='7502276853548')
+
+        self.assertEqual(blueprint_2.peso_nueva, None)
+        self.assertEqual(blueprint_2.peso_cristal, None)
+        self.assertEqual(blueprint_1.peso_nueva, None)
+        self.assertEqual(blueprint_1.peso_cristal, None)
+
+    
+    @patch('core.management.commands.seed_blueprints.pd.read_csv')
+    def test_seed_blueprints_ingredientes(self, mock_dataframe):
+        """ Testear el manejo de ingredientes no existentes"""
+
+        data = {
+           'codigo_barras': ['3662042003240', '7502276853548'],
+            'nombre_marca': ['RED POTION 750', 'BLUE POTION 750'],
+            'codigo_ingrediente': ['LICO999', 'LICO001'],
+            'capacidad': [750, 750],
+            'precio_unitario': [100, 100],
+            'peso_cristal': [452, 452],
+            'peso_nueva': [0, NaN]
+        }
+
+        df_blueprints = pd.DataFrame(data)
+        mock_dataframe.return_value = df_blueprints
+        out = StringIO()
+        call_command('seed_blueprints', 'BLUEPRINTS.csv', stdout=out)
+        blueprints = models.Producto.objects.all()
+
+        self.assertEqual(blueprints.count(), 1)
+
+    
+    def test_seed_blueprints_file(self):
+        """ Testear el manejo del archivo csv"""
+
+        out = StringIO()
+
+        with self.assertRaises(FileNotFoundError):
+            call_command('seed_blueprints', 'WRONGFILE.csv', stdout=out)
+
+
     # #@patch('core.management.commands.add_products.gspread.authorize')
     # @patch('core.management.commands.add_products.creds')    
     # def test_add_products_error_api_google(self, mock_creds):

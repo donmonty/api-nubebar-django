@@ -1480,7 +1480,7 @@ class BotellaNuevaSerializer(serializers.ModelSerializer):
             sat_hash=sat_hash,
 
             # Datos del producto en marbete:
-            nombre_marca='',
+            nombre_marca=producto.nombre_marca,
             tipo_producto='',
             graduacion_alcoholica='',
             capacidad=capacidad,
@@ -1652,7 +1652,7 @@ class BotellaUsadaSerializer(serializers.ModelSerializer):
             sat_hash=sat_hash,
 
             # Datos del producto en marbete:
-            nombre_marca='',
+            nombre_marca=producto.nombre_marca,
             tipo_producto='',
             graduacion_alcoholica='',
             capacidad=capacidad,
@@ -1914,7 +1914,7 @@ class BotellaNuevaSerializerFolioManual(serializers.ModelSerializer):
             sat_hash=sat_hash,
 
             # Datos del producto en marbete:
-            nombre_marca='',
+            nombre_marca=producto.nombre_marca,
             tipo_producto='',
             graduacion_alcoholica='',
             capacidad=capacidad,
@@ -2150,7 +2150,7 @@ class BotellaUsadaSerializerFolioManual(serializers.ModelSerializer):
             sat_hash=sat_hash,
 
             # Datos del producto en marbete:
-            nombre_marca='',
+            nombre_marca=producto.nombre_marca,
             tipo_producto='',
             graduacion_alcoholica='',
             capacidad=capacidad,

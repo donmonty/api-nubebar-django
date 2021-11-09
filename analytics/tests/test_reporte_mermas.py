@@ -594,12 +594,14 @@ class AnalyticsTests(TestCase):
         # Subquery: Selección de 'peso_botella' de la penúltima inspeccion
         sq_peso_penultima_inspeccion = Subquery(models.ItemInspeccion.objects
                                             .filter(botella=OuterRef('pk'))
+                                            .order_by()
                                             .order_by('-timestamp_inspeccion')
                                             .values('peso_botella')[1:2]
                                         )
 
         sq_peso_ultima_inspeccion = Subquery(models.ItemInspeccion.objects
                                         .filter(botella=OuterRef('pk'))
+                                        .order_by()
                                         .order_by('-timestamp_inspeccion')
                                         .values('peso_botella')[:1]
                                     )
@@ -642,8 +644,9 @@ class AnalyticsTests(TestCase):
             )
         )
 
-        #print('::: BOTELLAS - PESO ANTERIOR :::')
-        #print(botellas_peso_anterior.values())
+        # print('::: BOTELLAS - PESO ANTERIOR :::')
+        # print(botellas_peso_anterior.query)
+        # print(botellas_peso_anterior.values())
 
         #----------------------------------------------------------------------
         # Seleccionamos unicamente las botellas cuyo 'peso_anterior' no sea None
@@ -714,8 +717,8 @@ class AnalyticsTests(TestCase):
             consumos.append(ingrediente_consumo)
 
 
-        print('::: CONSUMO INGREDIENTES :::')
-        print(consumos)
+        # print('::: CONSUMO INGREDIENTES :::')
+        # print(consumos)
 
 
         # Checamos el consumo de ventas y consumo real de LICOR 43

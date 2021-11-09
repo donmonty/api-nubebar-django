@@ -2610,8 +2610,8 @@ def crear_botella_nueva(request):
         -------------------------------------------------------------------------------------------
         """
         # CASO 1: CAPTURA CON LECTOR DE SMARTPHONE
-
-        if 'captura_folio' not in request.data:
+        if request.data['captura_folio'] != 'MANUAL':
+        #if 'captura_folio' not in request.data:
 
             # Construimos el payload
             payload = {}
@@ -2640,8 +2640,8 @@ def crear_botella_nueva(request):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
         # CASO 2: CAPTURA MANUAL
-
-        if 'captura_folio' in request.data:
+        if request.data['captura_folio'] == 'MANUAL':
+        #if 'captura_folio' in request.data:
 
             # Construimos el payload
             payload = {}
@@ -2925,8 +2925,8 @@ def crear_botella_usada(request):
         -------------------------------------------------------------------------------------------
         """
         # CASO 1: CAPTURA CON LECTOR DE SMARTPHONE
-
-        if 'captura_folio' not in request.data:
+        if request.data['captura_folio'] != 'MANUAL':
+        #if 'captura_folio' not in request.data:
 
             payload = {}
 
@@ -2948,8 +2948,8 @@ def crear_botella_usada(request):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
         # CASO 2: CAPTURA MANUAL
-
-        if 'captura_folio' in request.data:
+        if request.data['captura_folio'] == 'MANUAL':
+        #if 'captura_folio' in request.data:
 
             payload = {}
 

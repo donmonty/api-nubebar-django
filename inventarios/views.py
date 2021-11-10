@@ -2660,9 +2660,6 @@ def crear_botella_nueva(request):
             else:
                 payload['peso_nueva'] = None
 
-            # Seteamos el sat_hash
-            payload['sat_hash'] = ''
-
             # Tomamos el folio y eliminamos cualquier guion medio
             payload['folio'] = request.data['folio']
             payload['folio'] = payload['folio'].replace('-', '')
@@ -2675,21 +2672,23 @@ def crear_botella_nueva(request):
                 }
                 return Response(response)
 
-        # Si el folio resultante tiene más de 12 caracteres
-        if len(payload['folio']) > 12:
-            response = {
-                'status': 'error',
-                'message': 'El folio del SAT no debe contener más de 13 caracteres.'
-            }
-            return Response(response)
+            # Si el folio resultante tiene más de 12 caracteres
+            if len(payload['folio']) > 12:
+                response = {
+                    'status': 'error',
+                    'message': 'El folio del SAT no debe contener más de 13 caracteres.'
+                }
+                return Response(response)
+            # Seteamos el sat_hash
+            payload['sat_hash'] = payload['folio']
 
-        # Serializamos el payload
-        serializer = serializers.BotellaNuevaSerializerFolioManual(data=payload, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Serializamos el payload
+            serializer = serializers.BotellaNuevaSerializerFolioManual(data=payload, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -2961,7 +2960,7 @@ def crear_botella_usada(request):
             payload['folio'] = request.data['folio']
             payload['peso_nueva'] = request.data['peso_nueva']
             payload['peso_inicial'] = request.data['peso_bascula']
-            payload['sat_hash'] = ''
+            
 
             # Tomamos el folio y eliminamos cualquier guion medio
             payload['folio'] = request.data['folio']
@@ -2975,21 +2974,24 @@ def crear_botella_usada(request):
                 }
                 return Response(response)
 
-        # Si el folio resultante tiene más de 12 caracteres
-        if len(payload['folio']) > 12:
-            response = {
-                'status': 'error',
-                'message': 'El folio del SAT no debe contener más de 13 caracteres.'
-            }
-            return Response(response)
+            # Si el folio resultante tiene más de 12 caracteres
+            if len(payload['folio']) > 12:
+                response = {
+                    'status': 'error',
+                    'message': 'El folio del SAT no debe contener más de 13 caracteres.'
+                }
+                return Response(response)
 
-        # Serializamos el payload
-        serializer = serializers.BotellaUsadaSerializerFolioManual(data=payload, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Seteamos el sat_hash
+            payload['sat_hash'] = payload['folio']
 
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+            # Serializamos el payload
+            serializer = serializers.BotellaUsadaSerializerFolioManual(data=payload, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

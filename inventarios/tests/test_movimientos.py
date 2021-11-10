@@ -2280,7 +2280,8 @@ class MovimientosTests(TestCase):
             'almacen': self.barra_1.id,
             'peso_nueva': 1550,
             'proveedor': self.vinos_america.id,
-            'sat_hash': 'Er1AXd5bdY/HBGUgq3QhnxldrSy19VyR235000'
+            'sat_hash': 'Er1AXd5bdY/HBGUgq3QhnxldrSy19VyR235000',
+            'captura_folio': 'AUTOMATICA'
         }
 
         # Construimos el request
@@ -2298,7 +2299,7 @@ class MovimientosTests(TestCase):
         botella_creada = models.Botella.objects.get(id=response.data['id'])
 
         # Checamos que el folio de la botella creada sea igual a ''
-        self.assertEqual('', botella_creada.folio)
+        self.assertEqual(payload['sat_hash'], botella_creada.folio)
 
         # Checamos que el resto de los atributos de la botella sean iguales a los del payload
         self.assertEqual(payload['usuario_alta'], botella_creada.usuario_alta.id)
@@ -2334,7 +2335,8 @@ class MovimientosTests(TestCase):
             'almacen': self.barra_1.id,
             'peso_nueva': 1550,
             'proveedor': self.vinos_america.id,
-            'sat_hash': 'Nn1644803750'
+            'sat_hash': 'Nn1644803750',
+            'captura_folio': 'AUTOMATICA'
         }
 
         # Construimos el request
@@ -2374,7 +2376,8 @@ class MovimientosTests(TestCase):
             'almacen': self.barra_1.id,
             #'peso_nueva': 1241,
             'proveedor': self.vinos_america.id,
-            'sat_hash': 'Er1AXd5bdY/HBGUgq3QhnxldrSy19VyR235000'
+            'sat_hash': 'Er1AXd5bdY/HBGUgq3QhnxldrSy19VyR235000',
+            'captura_folio': 'AUTOMATICA'
         }
 
         # Construimos el request
@@ -2392,7 +2395,7 @@ class MovimientosTests(TestCase):
         botella_creada = models.Botella.objects.get(id=response.data['id'])
 
         # Checamos que el folio de la botella creada sea igual al del payload
-        self.assertEqual('', botella_creada.folio)
+        self.assertEqual(payload['sat_hash'], botella_creada.folio)
 
         # Checamos que el resto de los atributos de la botella sean iguales a los del payload
         self.assertEqual(payload['usuario_alta'], botella_creada.usuario_alta.id)
@@ -2427,7 +2430,8 @@ class MovimientosTests(TestCase):
             'almacen': self.barra_1.id,
             'peso_nueva': 1550,
             'proveedor': self.vinos_america.id,
-            'sat_hash': 'Er1AXd5bdY/HBGUgq3QhnxldrSy19VyR235000'
+            'sat_hash': 'Er1AXd5bdY/HBGUgq3QhnxldrSy19VyR235000',
+            'captura_folio': 'AUTOMATICA'
         }
 
         # Construimos el request
@@ -2445,7 +2449,7 @@ class MovimientosTests(TestCase):
         botella_creada = models.Botella.objects.get(id=response.data['id'])
 
         # Checamos que el folio de la botella creada sea igual al del payload
-        self.assertEqual('', botella_creada.folio)
+        self.assertEqual(payload['sat_hash'], botella_creada.folio)
 
         # Checamos que el resto de los atributos de la botella sean iguales a los del payload
         self.assertEqual(payload['usuario_alta'], botella_creada.usuario_alta.id)
@@ -2774,7 +2778,8 @@ class MovimientosTests(TestCase):
             'peso_nueva': 1550,
             'peso_bascula': 1000,
             'proveedor': self.vinos_america.id,
-            'sat_hash': 'Er1AXd5bdY/HBGUgq3QhnxldrSy19VyR235000'
+            'sat_hash': 'Er1AXd5bdY/HBGUgq3QhnxldrSy19VyR235000',
+            'captura_folio': 'AUTOMATICA'
         }
 
         # Construimos el request
@@ -2792,7 +2797,7 @@ class MovimientosTests(TestCase):
         botella_creada = models.Botella.objects.get(id=response.data['id'])
 
         # Checamos que el folio de la botella creada sea igual al del payload
-        self.assertEqual('', botella_creada.folio)
+        self.assertEqual(payload['sat_hash'], botella_creada.folio)
 
         # Checamos que el resto de los atributos de la botella sean iguales a los del payload
         self.assertEqual(payload['usuario_alta'], botella_creada.usuario_alta.id)
@@ -2854,8 +2859,9 @@ class MovimientosTests(TestCase):
         # Tomamos la botella recién creada
         botella_nueva = models.Botella.objects.latest('fecha_registro')
         
-        # Checamos que el folio de la botella nueva sea correcto
+        # Checamos que el folio y sat_hash de la botella nueva sean correctos
         self.assertEqual(botella_nueva.folio, folio_ok)
+        self.assertEqual(botella_nueva.sat_hash, folio_ok)
 
 
     #-----------------------------------------------------------------------------
@@ -3040,9 +3046,9 @@ class MovimientosTests(TestCase):
         url = reverse('inventarios:crear-botella-nueva')
         response = self.client.post(url, payload)
         json_response = json.dumps(response.data)
-        print('::: RESPONSE DATA :::')
+        #print('::: RESPONSE DATA :::')
         #print(json_response)
-        print(response.data)
+        #print(response.data)
 
         # Checamos que se haya creado la botella
         self.assertTrue(models.Botella.objects.get(id=response.data['id']))

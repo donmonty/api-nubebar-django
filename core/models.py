@@ -354,7 +354,7 @@ class Botella(models.Model):
 	ESTADOS_BOTELLA = ((NUEVA, 'NUEVA'), (CON_LIQUIDO, 'CON LIQUIDO'), (VACIA, 'VACIA'), (PERDIDA, 'PERDIDA'))
 	
 	# Datos del marbete
-	folio                       = models.CharField(max_length=12)
+	folio                       = models.CharField(max_length=255, unique=True)
 	tipo_marbete                = models.CharField(max_length=255, blank=True)
 	fecha_elaboracion_marbete   = models.CharField(max_length=255, blank=True)
 	lote_produccion_marbete     = models.CharField(max_length=255, blank=True)
@@ -389,7 +389,7 @@ class Botella(models.Model):
 	proveedor 					= models.ForeignKey(Proveedor, related_name='botellas_proveedor', blank=True, null=True, on_delete=models.SET_NULL)
 	ingrediente 				= models.CharField(max_length=255, blank=True)
 	categoria 					= models.CharField(max_length=255, blank=True)
-	sat_hash = models.CharField(max_length=255, blank=True)
+	sat_hash = models.CharField(max_length=255, unique=True)
 
 	def save(self, *args, **kwargs):
 		

@@ -190,7 +190,8 @@ class Command(BaseCommand):
             sat_hash='Nn1816767788',
             peso_cristal=450,
             peso_inicial=1115,
-            peso_actual=1115
+            peso_actual=1115,
+            precio_unitario=100
           )
 
           botella_jw_black = models.Botella.objects.create(
@@ -205,7 +206,8 @@ class Command(BaseCommand):
             sat_hash='Ii0934665909',
             peso_cristal=400,
             peso_inicial=1113,
-            peso_actual=1113
+            peso_actual=1113,
+            precio_unitario=100
           )
 
     except DatabaseError as error:

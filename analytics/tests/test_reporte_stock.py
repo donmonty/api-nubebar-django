@@ -136,7 +136,8 @@ class AnalyticsTests(TestCase):
             peso_nueva=1212,
             peso_inicial=1212,
             peso_actual=1000,
-            precio_unitario=347.50
+            precio_unitario=347.50,
+            sat_hash='Ii0000000001'
         )
 
         self.botella_licor43_2 = models.Botella.objects.create(
@@ -152,7 +153,8 @@ class AnalyticsTests(TestCase):
             peso_nueva=1212,
             peso_inicial=1212,
             peso_actual=1000,
-            precio_unitario=347.50
+            precio_unitario=347.50,
+            sat_hash='Ii0000000002'
         )
 
         self.botella_licor43_3 = models.Botella.objects.create(
@@ -168,7 +170,8 @@ class AnalyticsTests(TestCase):
             peso_inicial=1212,
             peso_actual=500,
             precio_unitario=347.50,
-            estado='0'
+            estado='0',
+            sat_hash='3'
         )
 
         self.botella_herradura_blanco = models.Botella.objects.create(
@@ -184,7 +187,8 @@ class AnalyticsTests(TestCase):
             peso_nueva=1165,
             peso_inicial=1165,
             peso_actual=1000,
-            precio_unitario=296.00
+            precio_unitario=296.00,
+            sat_hash="Nn0000000001"
         )
 
         self.botella_jw_black = models.Botella.objects.create(
@@ -200,7 +204,8 @@ class AnalyticsTests(TestCase):
             peso_nueva=1212,
             peso_inicial=1212,
             peso_actual=1000,
-            precio_unitario=565.50
+            precio_unitario=565.50,
+            sat_hash='Ii0814634647'
         )
 
         self.botella_maestro_dobel = models.Botella.objects.create(
@@ -215,7 +220,8 @@ class AnalyticsTests(TestCase):
             peso_inicial=1212,
             peso_actual=800,
             precio_unitario=460.00,
-            estado='0'
+            estado='0',
+            sat_hash='Nn1647414423'
         )
 
         self.botella_maestro_dobel_02 = models.Botella.objects.create(
@@ -230,7 +236,8 @@ class AnalyticsTests(TestCase):
             peso_inicial=1212,
             peso_actual=800,
             precio_unitario=460.00,
-            estado='1'
+            estado='1',
+            sat_hash='2'
         )
 
 

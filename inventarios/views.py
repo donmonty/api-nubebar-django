@@ -2582,7 +2582,7 @@ def get_producto(request, codigo_barras):
                 'message': 'No existe un Producto con ese codigo de barras.'
             }
 
-            return Response(response)
+            return Response(status=status.HTTP_404_NOT_FOUND, data=response)
 
 
     else:

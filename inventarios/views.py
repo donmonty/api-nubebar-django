@@ -315,8 +315,8 @@ def get_lista_inspecciones(request, almacen_id, tipo_id):
 
     if request.method == 'GET':
 
-        almacen_id = int(almacen_id)
-        tipo_id = tipo_id
+        #almacen = int(almacen_id)
+        #tipo = tipo_id
         usuario = request.user
 
         almacen = models.Almacen.objects.get(id=almacen_id)
@@ -327,6 +327,7 @@ def get_lista_inspecciones(request, almacen_id, tipo_id):
         if sucursal_id in lista_sucursales:
             queryset = models.Inspeccion.objects.filter(almacen__id=almacen_id, tipo=tipo_id).order_by('-fecha_alta')
             serializer = serializers.InspeccionListSerializer(queryset, many=True)
+            # print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         else:
@@ -716,7 +717,7 @@ def resumen_inspeccion_no_contado(request, inspeccion_id):
                         lista_ingredientes.append(obj_ingrediente)
                 
                 # Guardamos la lista de ingredientes en la categoría actual
-                obj['botellas'] = lista_ingredientes
+                obj['data'] = lista_ingredientes
                 # Guardamos el objecto en la lista del output del Response
                 resumen_inspeccion.append(obj)
             
@@ -728,7 +729,7 @@ def resumen_inspeccion_no_contado(request, inspeccion_id):
         
         # Si no hay botellas pendientes de inspección, enviamos un reponse con el mensaje
         else:
-            return Response({'mensaje: No hay botellas pendientes de inspección.'})
+            return Response(data={'mensaje: No hay botellas pendientes de inspeccion.'}, status=status.HTTP_404_NOT_FOUND)
 
     else:
         Response(status=status.HTTP_400_BAD_REQUEST)
@@ -845,14 +846,14 @@ def resumen_inspeccion_contado(request, inspeccion_id):
                         nombre_ingrediente = ingrediente.nombre
                         cantidad = ingrediente.items_inspeccion
                         # Los guardamos en un diccionario
-                        obj_ingrediente['ingrediente'] = nombre_ingrediente
+                        obj_ingrediente['ingrediente_id'] = ingrediente_id
                         obj_ingrediente['ingrediente'] = nombre_ingrediente
                         obj_ingrediente['cantidad'] = cantidad
                         # Guardamos el diccionario en una lista de ingredientes
                         lista_ingredientes.append(obj_ingrediente)
                 
                 # Guardamos la lista de ingredientes en la categoría actual
-                obj['botellas'] = lista_ingredientes
+                obj['data'] = lista_ingredientes
                 # Guardamos el objecto en la lista del output del Response
                 resumen_inspeccion.append(obj)
             
@@ -864,7 +865,7 @@ def resumen_inspeccion_contado(request, inspeccion_id):
 
         # Si no hay categorías con ItemsInspeccion YA CONTADOS
         else: 
-            return Response({'mensaje': 'Aún no hay botellas contadas.'})
+            return Response(data={'mensaje': 'Aún no hay botellas contadas.'}, status=status.HTTP_404_NOT_FOUND)
 
     else:
         Response(status=status.HTTP_400_BAD_REQUEST)
@@ -1141,7 +1142,7 @@ def update_peso_botella(request):
         # Tomamos las variables del request
         item_inspeccion_id =  request.data['item_inspeccion']
         peso_botella = request.data['peso_botella']
-        estado_botella = request.data['estado']
+        estado_botella = request.data['estado_botella']
 
         # Creamos el payload del request
         payload = {
@@ -2581,7 +2582,7 @@ def get_producto(request, codigo_barras):
                 'message': 'No existe un Producto con ese codigo de barras.'
             }
 
-            return Response(response)
+            return Response(status=status.HTTP_404_NOT_FOUND, data=response)
 
 
     else:
@@ -2609,8 +2610,8 @@ def crear_botella_nueva(request):
         -------------------------------------------------------------------------------------------
         """
         # CASO 1: CAPTURA CON LECTOR DE SMARTPHONE
-
-        if 'captura_folio' not in request.data:
+        if request.data['captura_folio'] != 'MANUAL':
+        #if 'captura_folio' not in request.data:
 
             # Construimos el payload
             payload = {}
@@ -2639,8 +2640,8 @@ def crear_botella_nueva(request):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
         # CASO 2: CAPTURA MANUAL
-
-        if 'captura_folio' in request.data:
+        if request.data['captura_folio'] == 'MANUAL':
+        #if 'captura_folio' in request.data:
 
             # Construimos el payload
             payload = {}
@@ -2659,9 +2660,6 @@ def crear_botella_nueva(request):
             else:
                 payload['peso_nueva'] = None
 
-            # Seteamos el sat_hash
-            payload['sat_hash'] = ''
-
             # Tomamos el folio y eliminamos cualquier guion medio
             payload['folio'] = request.data['folio']
             payload['folio'] = payload['folio'].replace('-', '')
@@ -2674,21 +2672,23 @@ def crear_botella_nueva(request):
                 }
                 return Response(response)
 
-        # Si el folio resultante tiene más de 12 caracteres
-        if len(payload['folio']) > 12:
-            response = {
-                'status': 'error',
-                'message': 'El folio del SAT no debe contener más de 13 caracteres.'
-            }
-            return Response(response)
+            # Si el folio resultante tiene más de 12 caracteres
+            if len(payload['folio']) > 12:
+                response = {
+                    'status': 'error',
+                    'message': 'El folio del SAT no debe contener más de 13 caracteres.'
+                }
+                return Response(response)
+            # Seteamos el sat_hash
+            payload['sat_hash'] = payload['folio']
 
-        # Serializamos el payload
-        serializer = serializers.BotellaNuevaSerializerFolioManual(data=payload, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Serializamos el payload
+            serializer = serializers.BotellaNuevaSerializerFolioManual(data=payload, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -2924,8 +2924,8 @@ def crear_botella_usada(request):
         -------------------------------------------------------------------------------------------
         """
         # CASO 1: CAPTURA CON LECTOR DE SMARTPHONE
-
-        if 'captura_folio' not in request.data:
+        if request.data['captura_folio'] != 'MANUAL':
+        #if 'captura_folio' not in request.data:
 
             payload = {}
 
@@ -2947,8 +2947,8 @@ def crear_botella_usada(request):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
         # CASO 2: CAPTURA MANUAL
-
-        if 'captura_folio' in request.data:
+        if request.data['captura_folio'] == 'MANUAL':
+        #if 'captura_folio' in request.data:
 
             payload = {}
 
@@ -2960,7 +2960,7 @@ def crear_botella_usada(request):
             payload['folio'] = request.data['folio']
             payload['peso_nueva'] = request.data['peso_nueva']
             payload['peso_inicial'] = request.data['peso_bascula']
-            payload['sat_hash'] = ''
+            
 
             # Tomamos el folio y eliminamos cualquier guion medio
             payload['folio'] = request.data['folio']
@@ -2974,21 +2974,24 @@ def crear_botella_usada(request):
                 }
                 return Response(response)
 
-        # Si el folio resultante tiene más de 12 caracteres
-        if len(payload['folio']) > 12:
-            response = {
-                'status': 'error',
-                'message': 'El folio del SAT no debe contener más de 13 caracteres.'
-            }
-            return Response(response)
+            # Si el folio resultante tiene más de 12 caracteres
+            if len(payload['folio']) > 12:
+                response = {
+                    'status': 'error',
+                    'message': 'El folio del SAT no debe contener más de 13 caracteres.'
+                }
+                return Response(response)
 
-        # Serializamos el payload
-        serializer = serializers.BotellaUsadaSerializerFolioManual(data=payload, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Seteamos el sat_hash
+            payload['sat_hash'] = payload['folio']
 
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+            # Serializamos el payload
+            serializer = serializers.BotellaUsadaSerializerFolioManual(data=payload, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

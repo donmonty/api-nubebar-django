@@ -335,7 +335,7 @@ class Producto(models.Model):
 	def __str__(self):
 		nombre_ingrediente = self.ingrediente.nombre
 
-		return 'NOMBRE: {} - CAPACIDAD: {} - BARCODE: {} - PRECIO UNITARIO: {}'.format(nombre_ingrediente, self.capacidad, self.codigo_barras, self.precio_unitario)
+		return 'NOMBRE: {} - CAPACIDAD: {} - BARCODE: {}'.format(nombre_ingrediente, self.capacidad, self.codigo_barras)
 
 
 """
@@ -354,7 +354,7 @@ class Botella(models.Model):
 	ESTADOS_BOTELLA = ((NUEVA, 'NUEVA'), (CON_LIQUIDO, 'CON LIQUIDO'), (VACIA, 'VACIA'), (PERDIDA, 'PERDIDA'))
 	
 	# Datos del marbete
-	folio                       = models.CharField(max_length=12)
+	folio                       = models.CharField(max_length=255, unique=True)
 	tipo_marbete                = models.CharField(max_length=255, blank=True)
 	fecha_elaboracion_marbete   = models.CharField(max_length=255, blank=True)
 	lote_produccion_marbete     = models.CharField(max_length=255, blank=True)
@@ -389,7 +389,7 @@ class Botella(models.Model):
 	proveedor 					= models.ForeignKey(Proveedor, related_name='botellas_proveedor', blank=True, null=True, on_delete=models.SET_NULL)
 	ingrediente 				= models.CharField(max_length=255, blank=True)
 	categoria 					= models.CharField(max_length=255, blank=True)
-	sat_hash = models.CharField(max_length=255, blank=True)
+	sat_hash = models.CharField(max_length=255, unique=True)
 
 	def save(self, *args, **kwargs):
 		
@@ -418,7 +418,7 @@ class Botella(models.Model):
 		nombre_ingrediente = ingrediente.nombre
 		nombre_sucursal = self.sucursal.nombre
 		numero_almacen = self.almacen.numero
-		return 'FOLIO: {} - HASH: {} - PRODUCTO: {} - ESTADO: {} - SUCURSAL: {} - ALMACEN: {}'.format(self.folio, self.sat_hash, producto.nombre, self.estado, nombre_sucursal, numero_almacen)
+		return 'FOLIO: {} - HASH: {} - PRODUCTO: {} - ESTADO: {} - SUCURSAL: {} - ALMACEN: {}'.format(self.folio, self.sat_hash, producto.nombre_marca, self.estado, nombre_sucursal, numero_almacen)
 
 """
 --------------------------------------------------------------------------

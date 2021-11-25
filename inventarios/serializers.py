@@ -1456,10 +1456,10 @@ class BotellaNuevaSerializer(serializers.ModelSerializer):
             peso_cristal = round(peso_nueva - (capacidad * factor_peso))
 
         # Si el sat_hash es igual al folio del marbete, folio = sat_hash (botellas legacy)
-        if ((sat_hash[0:2] == 'Nn') or (sat_hash[0:2] == 'Ii')) and (len(sat_hash) == 12):
-            folio = sat_hash
-        else:
-            folio = ''
+        # if ((sat_hash[0:2] == 'Nn') or (sat_hash[0:2] == 'Ii')) and (len(sat_hash) == 12):
+        #     folio = sat_hash
+        # else:
+        #     folio = ''
 
         botella = models.Botella.objects.create(
 
@@ -1472,7 +1472,7 @@ class BotellaNuevaSerializer(serializers.ModelSerializer):
             precio_unitario=precio_unitario,
 
             # Datos del marbete:
-            folio=folio,
+            folio=sat_hash,
             tipo_marbete='',
             fecha_elaboracion_marbete='',
             lote_produccion_marbete='',
@@ -1480,7 +1480,7 @@ class BotellaNuevaSerializer(serializers.ModelSerializer):
             sat_hash=sat_hash,
 
             # Datos del producto en marbete:
-            nombre_marca='',
+            nombre_marca=producto.nombre_marca,
             tipo_producto='',
             graduacion_alcoholica='',
             capacidad=capacidad,
@@ -1644,7 +1644,8 @@ class BotellaUsadaSerializer(serializers.ModelSerializer):
             precio_unitario=precio_unitario,
 
             # Datos del marbete:
-            folio='',
+            #folio='',
+            folio=sat_hash,
             tipo_marbete='',
             fecha_elaboracion_marbete='',
             lote_produccion_marbete='',
@@ -1652,7 +1653,7 @@ class BotellaUsadaSerializer(serializers.ModelSerializer):
             sat_hash=sat_hash,
 
             # Datos del producto en marbete:
-            nombre_marca='',
+            nombre_marca=producto.nombre_marca,
             tipo_producto='',
             graduacion_alcoholica='',
             capacidad=capacidad,
@@ -1911,10 +1912,10 @@ class BotellaNuevaSerializerFolioManual(serializers.ModelSerializer):
             fecha_elaboracion_marbete='',
             lote_produccion_marbete='',
             url='',
-            sat_hash=sat_hash,
+            sat_hash=folio,
 
             # Datos del producto en marbete:
-            nombre_marca='',
+            nombre_marca=producto.nombre_marca,
             tipo_producto='',
             graduacion_alcoholica='',
             capacidad=capacidad,
@@ -2147,10 +2148,11 @@ class BotellaUsadaSerializerFolioManual(serializers.ModelSerializer):
             fecha_elaboracion_marbete='',
             lote_produccion_marbete='',
             url='',
-            sat_hash=sat_hash,
+            #sat_hash=sat_hash,
+            sat_hash=folio,
 
             # Datos del producto en marbete:
-            nombre_marca='',
+            nombre_marca=producto.nombre_marca,
             tipo_producto='',
             graduacion_alcoholica='',
             capacidad=capacidad,

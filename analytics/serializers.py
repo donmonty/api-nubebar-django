@@ -4,6 +4,7 @@ from core import models
 from analytics import reporte_mermas as rm
 import datetime
 from django.utils.timezone import make_aware
+from django.utils import timezone
 
 
 """
@@ -52,7 +53,8 @@ class ReporteMermasCreateSerializer(serializers.ModelSerializer):
                 # Checamos que el almacen tenga botellas registradas
                 if models.Botella.objects.filter(almacen=almacen).exists():
                     primera_botella = models.Botella.objects.filter(almacen=almacen).order_by('fecha_registro')[:1]
-                    fecha_inicial = primera_botella[0].fecha_registro.date()
+                    #fecha_inicial = primera_botella[0].fecha_registro.date()
+                    fecha_inicial = timezone.localtime(primera_botella[0].fecha_registro).date()
                     fecha_final = inspeccion.fecha_alta
 
                 else:

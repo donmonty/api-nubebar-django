@@ -1497,8 +1497,8 @@ class InspeccionesTests(TestCase):
         # Checamos que la categoría LICOR esté en el response
         self.assertEqual(response.data[0]['categoria'], 'LICOR')
         # Checamos que haya 2 botellas de Licor 43
-        self.assertEqual(response.data[0]['botellas'][0]['cantidad'], 2)
-        self.assertEqual(response.data[0]['botellas'][0]['ingrediente'], 'LICOR 43')
+        self.assertEqual(response.data[0]['data'][0]['cantidad'], 2)
+        self.assertEqual(response.data[0]['data'][0]['ingrediente'], 'LICOR 43')
         # Checamos que haya 1 botella de Herradura Blanco
         #self.assertEqual(response.data[1]['botellas'][0]['cantidad'], 1)
         #self.assertEqual(response.data[1]['botellas'][0]['ingrediente'], 'HERRADURA BLANCO')
@@ -1584,8 +1584,8 @@ class InspeccionesTests(TestCase):
         # Checamos que la categoría LICOR esté en el response
         self.assertEqual(response.data[0]['categoria'], 'LICOR')
         # Checamos que haya 2 botellas de Licor 43
-        self.assertEqual(response.data[0]['botellas'][0]['cantidad'], 2)
-        self.assertEqual(response.data[0]['botellas'][0]['ingrediente'], 'LICOR 43')
+        self.assertEqual(response.data[0]['data'][0]['cantidad'], 2)
+        self.assertEqual(response.data[0]['data'][0]['ingrediente'], 'LICOR 43')
         # Checamos que haya 1 botella de Herradura Blanco
         #self.assertEqual(response.data[1]['botellas'][0]['cantidad'], 1)
         #self.assertEqual(response.data[1]['botellas'][0]['ingrediente'], 'HERRADURA BLANCO')
@@ -2593,7 +2593,9 @@ class InspeccionesTests(TestCase):
         res = self.client.post(url, payload)
         json_response = json.dumps(res.data)
         #print('::: RESPONSE DATA :::')
-        #print(json_response)
+        print(json_response)
+        print('//// URL:')
+        print(url)
 
         # Tomamos la inspección creada con el POST
         inspeccion = models.Inspeccion.objects.get(id=res.data['id'])

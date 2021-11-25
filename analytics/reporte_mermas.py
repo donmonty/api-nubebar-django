@@ -186,6 +186,10 @@ def get_ventas_merma(merma_id):
 
     else: 
         ingrediente = merma.ingrediente
+        print('/// Merma fecha_inicial:')
+        print(merma.fecha_inicial)
+        print('/// Merma fecha_final:')
+        print(merma.fecha_final)
 
         # Tomamos las ventas asociadas al ingrediente de la MermaIngrediente
         consumos = models.ConsumoRecetaVendida.objects.filter(
@@ -196,6 +200,8 @@ def get_ventas_merma(merma_id):
         )
 
         consumos = consumos.values('venta')
+        print('//// Consumos:')
+        print(consumos)
 
         ventas = models.Venta.objects.filter(id__in=consumos)
 

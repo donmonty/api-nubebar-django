@@ -77,6 +77,7 @@ class BotellaAdmin(admin.ModelAdmin):
         'usuario_alta',
         'sucursal',
         'almacen',
+        'peso_nueva',
         'peso_cristal',
         'peso_inicial',
         'peso_actual',
@@ -85,7 +86,7 @@ class BotellaAdmin(admin.ModelAdmin):
     list_display = ('nombre_marca', 'sat_hash', 'folio', 'sucursal', 'estado', 'fecha_registro')
     ordering = ('-fecha_registro',)
     list_filter = ('sucursal', 'fecha_registro')
-    search_fields = ('sat_hash', 'folio')
+    search_fields = ('sat_hash', 'folio', 'nombre_marca')
 
 
 

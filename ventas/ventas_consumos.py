@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.timezone import make_aware
 
 import pandas as pd
 import datetime
@@ -14,8 +15,11 @@ from core import models
 
 def registrar(df_ventas, sucursal):
 
+    now = make_aware(datetime.datetime.now())
+    ayer = now - datetime.timedelta(days=1)
+
     total_ventas_consumos = []
-    ayer = datetime.date.today() - datetime.timedelta(days=1)
+    #ayer = datetime.date.today() - datetime.timedelta(days=1)
     productos_no_registrados = []
 
     for (sucursal_id, caja_id, codigo_pos, nombre, unidades, importe) in df_ventas.itertuples(index=False, name=None):

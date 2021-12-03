@@ -1019,6 +1019,8 @@ def detalle_botella_inspeccion(request, inspeccion_id, sat_hash):
 
         inspeccion_id = int(inspeccion_id)
         sat_hash = unquote(sat_hash)
+        print("//// Decoded sat_hash:")
+        print(sat_hash)
 
         # Si se trata de un folio custom, le adjuntamos el numero de la sucursal
         if re.match('^[0-9]*$', sat_hash):
@@ -1029,6 +1031,7 @@ def detalle_botella_inspeccion(request, inspeccion_id, sat_hash):
 
         # Checamos que la botella escaneada pertenezca a la Inspección en curso
         if models.ItemInspeccion.objects.filter(inspeccion__id=inspeccion_id, botella__sat_hash=sat_hash).exists():
+            print("//// ItemInspeccion EXISTS!")
             item_inspeccion = models.ItemInspeccion.objects.get(inspeccion__id=inspeccion_id, botella__sat_hash=sat_hash)
              
             # Si la botella escaneada no ha sido inspeccionada, mostramos su ficha técnica

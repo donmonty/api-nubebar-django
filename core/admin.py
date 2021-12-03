@@ -88,6 +88,17 @@ class BotellaAdmin(admin.ModelAdmin):
     list_filter = ('sucursal', 'fecha_registro')
     search_fields = ('sat_hash', 'folio', 'nombre_marca')
 
+@admin.register(models.ItemInspeccion)
+class ItemInspeccionAdmin(admin.ModelAdmin):
+    fields = (
+        'peso_botella',
+        'inspeccionado'
+    )
+    list_display = ('peso_botella', 'inspeccionado')
+    ordering = ('-timestamp_inspeccion',)
+    list_filter = ('inspeccionado',)
+    search_fields = ('peso_botella',)
+
 
 
 

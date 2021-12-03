@@ -9,6 +9,7 @@ from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F, Q, QuerySet, Avg, Count, Sum, Subquery, OuterRef, Exists
 from django.shortcuts import get_object_or_404
+from urllib.parse import unquote
 import math
 import json
 import re
@@ -1017,6 +1018,7 @@ def detalle_botella_inspeccion(request, inspeccion_id, sat_hash):
     if request.method == 'GET':
 
         inspeccion_id = int(inspeccion_id)
+        sat_hash = unquote(sat_hash)
 
         # Si se trata de un folio custom, le adjuntamos el numero de la sucursal
         if re.match('^[0-9]*$', sat_hash):

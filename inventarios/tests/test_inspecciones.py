@@ -191,6 +191,18 @@ class InspeccionesTests(TestCase):
             sat_hash='Ii0000000001'
         )
 
+        self.botella_licor43_B = models.Botella.objects.create(
+            folio='Ii0000000666',
+            producto=self.producto_licor43,
+            url='https://siat.sat.gob.mx/app/qr/faces/pages/mobile/validadorqr.jsf?D1=4&D2=1&D3=Ii0765216599',
+            capacidad=750,
+            usuario_alta=self.usuario,
+            sucursal=self.magno_brasserie,
+            almacen=self.barra_1,
+            proveedor=self.vinos_america,
+            sat_hash='SsP6WkJ1AcGh0/0OHrOR9V5Qs05Ud+j65qa000'
+        )
+
         self.botella_herradura_blanco = models.Botella.objects.create(
             folio='Nn0000000001',
             producto=self.producto_herradura_blanco,
@@ -1865,6 +1877,54 @@ class InspeccionesTests(TestCase):
             #'sat_hash': 'Kxfc%2FIZwxHugDgnTHFd3PiMvNrNUIqqF4pa000'
         }
         url = reverse('inventarios:get-detalle-botella-inspeccion', kwargs=parametros)
+        response = self.client.get(url)
+        #json_response = json.dumps(response.data)
+
+        #print('::: RESPONSE DATA :::')
+        #print(response.data)
+        #print(json_response)
+
+        # Checamos que el request sea exitoso
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Checamos que los datos del response y los datos del serializer sean iguales
+        self.assertEqual(response.data, serializer.data)
+
+    #-----------------------------------------------------------------------------
+    def test_detalle_botella_inspeccion_decode_hash(self):
+        """ Testear el endpoint 'detalle_botella_inspeccion' decodificando el sat_hash"""
+
+        # Definimos el historial de inspecciones de nuestra botella de Licor 43
+        with freeze_time("2019-05-01"):
+            # Inspeccion 1
+            inspeccion_1 = models.Inspeccion.objects.create(
+                almacen=self.barra_1,
+                sucursal=self.magno_brasserie,
+                usuario_alta=self.usuario,
+                usuario_cierre=self.usuario,
+                #estado='0' # ABIERTA
+            )
+
+            # ItemsInspeccion de la Inspeccion 1
+            item_inspeccion_1 = models.ItemInspeccion.objects.create(
+                inspeccion=inspeccion_1,
+                botella=self.botella_licor43_B,
+                peso_botella = 1212,
+            )
+
+        # Tomamos el ItemInspeccion y lo serializamos
+        serializer = ItemInspeccionDetalleSerializer(item_inspeccion_1)
+        #print('::: SERIALIZER DATA :::')
+        #print(serializer.data)
+
+        # Hacemos el request
+        parametros = {
+            'inspeccion_id': inspeccion_1.id,
+            #'sat_hash': self.botella_licor43_B.sat_hash
+            'sat_hash': 'SsP6WkJ1AcGh0%2F0OHrOR9V5Qs05Ud%2Bj65qa000'
+        }
+        url = reverse('inventarios:get-detalle-botella-inspeccion', kwargs=parametros)
+        print("//// URL:")
+        print(url)
         response = self.client.get(url)
         #json_response = json.dumps(response.data)
 

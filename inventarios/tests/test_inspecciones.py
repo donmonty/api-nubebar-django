@@ -1862,6 +1862,7 @@ class InspeccionesTests(TestCase):
         parametros = {
             'inspeccion_id': inspeccion_1.id,
             'sat_hash': self.botella_licor43.sat_hash
+            #'sat_hash': 'Kxfc%2FIZwxHugDgnTHFd3PiMvNrNUIqqF4pa000'
         }
         url = reverse('inventarios:get-detalle-botella-inspeccion', kwargs=parametros)
         response = self.client.get(url)

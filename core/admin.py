@@ -91,6 +91,8 @@ class BotellaAdmin(admin.ModelAdmin):
 @admin.register(models.ItemInspeccion)
 class ItemInspeccionAdmin(admin.ModelAdmin):
     fields = (
+        'inspeccion',
+        'botella',
         'peso_botella',
         'inspeccionado'
     )

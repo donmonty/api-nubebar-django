@@ -1017,6 +1017,9 @@ def detalle_botella_inspeccion(request, inspeccion_id, sat_hash):
 
     if request.method == 'GET':
 
+        print('//// Raw sat_hash:')
+        print(sat_hash)
+
         inspeccion_id = int(inspeccion_id)
         sat_hash = unquote(sat_hash)
         print("//// Decoded sat_hash:")
@@ -1050,6 +1053,57 @@ def detalle_botella_inspeccion(request, inspeccion_id, sat_hash):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+
+"""
+-----------------------------------------------------------------------------
+Endpoint que muestra el detalle de una botella cuando se escanea con la app
+durante una Inspeccion. 
+
+Nota:
+Usamos POST para evitar errores de parsing con el sat_hash
+-----------------------------------------------------------------------------
+"""
+@api_view(['POST'],)
+@permission_classes((IsAuthenticated,))
+@authentication_classes((TokenAuthentication,))
+def detalle_botella_inspeccion_post(request):
+
+    if request.method == 'POST':
+
+        inspeccion_id = request.data['inspeccion_id']
+        sat_hash = request.data['sat_hash']
+        
+        #print("//// sat_hash:")
+        #print(sat_hash)
+
+        # Si se trata de un folio custom, le adjuntamos el numero de la sucursal
+        if re.match('^[0-9]*$', sat_hash):
+
+            inspeccion = models.Inspeccion.objects.get(id=inspeccion_id)
+            sucursal_id = str(inspeccion.sucursal.id)
+            folio_id = sucursal_id + sat_hash
+
+        # Checamos que la botella escaneada pertenezca a la Inspección en curso
+        if models.ItemInspeccion.objects.filter(inspeccion__id=inspeccion_id, botella__sat_hash=sat_hash).exists():
+            #print("//// ItemInspeccion EXISTS!")
+            item_inspeccion = models.ItemInspeccion.objects.get(inspeccion__id=inspeccion_id, botella__sat_hash=sat_hash)
+             
+            # Si la botella escaneada no ha sido inspeccionada, mostramos su ficha técnica
+            if item_inspeccion.inspeccionado == False:
+                serializer = serializers.ItemInspeccionDetalleSerializer(item_inspeccion)
+                return Response(serializer.data)
+            
+            # Si la botella ya fue inspecionada, notificamos al usuario
+            else:
+                return Response({'mensaje': 'Esta botella ya fue inspeccionada.'})
+
+        # Si la botella no pertenece a la Inspección en curso, notificamos al usuario
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND, data={'mensaje': 'Esta botella no es parte de la inspeccion.'})
+
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 """
@@ -2111,14 +2165,48 @@ class InspeccionTotalViewSet(viewsets.ModelViewSet):
 Endpoint para consultar el detalle de una Botella del inventario
 -----------------------------------------------------------------------------------
 """
-@api_view(['GET'],)
+# @api_view(['GET'],)
+# @permission_classes((IsAuthenticated,))
+# @authentication_classes((TokenAuthentication,))
+# def consultar_botella(request, sat_hash):
+
+#     if request.method == 'GET':
+
+#         # folio = folio_id
+
+#         # Checamos que el folio esté registrado en la base de datos
+#         try:
+#             botella = models.Botella.objects.get(sat_hash=sat_hash)
+
+#         except ObjectDoesNotExist:
+#             mensaje = {'mensaje': 'Esta botella no está registrada en el inventario.'}
+#             return Response(data=mensaje, status=status.HTTP_404_NOT_FOUND)
+
+#         else:
+#             botella = models.Botella.objects.get(sat_hash=sat_hash)
+
+#             # Serializamos la botella
+#             serializer = serializers.BotellaConsultaSerializer(botella)
+#             return Response(serializer.data)
+
+#     else:
+#         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+"""
+-----------------------------------------------------------------------------------
+Endpoint para consultar el detalle de una Botella del inventario
+Nota: Usamos POST para evitar conflictos al parsear el sat_hash
+-----------------------------------------------------------------------------------
+"""
+@api_view(['POST'],)
 @permission_classes((IsAuthenticated,))
 @authentication_classes((TokenAuthentication,))
-def consultar_botella(request, sat_hash):
+def consultar_botella(request):
 
-    if request.method == 'GET':
+    if request.method == 'POST':
 
-        # folio = folio_id
+        sat_hash = request.data['sat_hash']
 
         # Checamos que el folio esté registrado en la base de datos
         try:
@@ -2137,6 +2225,7 @@ def consultar_botella(request, sat_hash):
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 
 """

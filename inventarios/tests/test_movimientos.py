@@ -1923,13 +1923,14 @@ class MovimientosTests(TestCase):
         """
 
         sat_hash = self.botella_licor43.sat_hash
+        payload = {'sat_hash': sat_hash}
 
         # Serializamos la botella que luego cotejaremos en el response
         serializer = BotellaConsultaSerializer(self.botella_licor43)
 
         # Construimos el request
-        url = reverse('inventarios:consultar-botella', args=[sat_hash])
-        response = self.client.get(url)
+        url = reverse('inventarios:consultar-botella')
+        response = self.client.post(url, payload)
         # json_response = json.dumps(response.data)
 
         #print('::: RESPONSE DATA :::')
@@ -1950,10 +1951,11 @@ class MovimientosTests(TestCase):
         """
 
         sat_hash = 'Ii0763516458'
+        payload = {'sat_hash': sat_hash}
 
         # Construimos el request
-        url = reverse('inventarios:consultar-botella', args=[sat_hash])
-        response = self.client.get(url)
+        url = reverse('inventarios:consultar-botella')
+        response = self.client.post(url, payload)
 
         #print('::: RESPONSE DATA :::')
         #print(response.data)

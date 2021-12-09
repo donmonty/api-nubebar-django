@@ -1889,6 +1889,55 @@ class InspeccionesTests(TestCase):
         # Checamos que los datos del response y los datos del serializer sean iguales
         self.assertEqual(response.data, serializer.data)
 
+    
+    #-----------------------------------------------------------------------------
+    def test_detalle_botella_inspeccion_post(self):
+        """ Testear el endpoint 'detalle_botella_inspeccion_post' """
+
+        # Definimos el historial de inspecciones de nuestra botella de Licor 43
+        with freeze_time("2019-05-01"):
+            # Inspeccion 1
+            inspeccion_1 = models.Inspeccion.objects.create(
+                almacen=self.barra_1,
+                sucursal=self.magno_brasserie,
+                usuario_alta=self.usuario,
+                usuario_cierre=self.usuario,
+                #estado='0' # ABIERTA
+            )
+
+            # ItemsInspeccion de la Inspeccion 1
+            item_inspeccion_1 = models.ItemInspeccion.objects.create(
+                inspeccion=inspeccion_1,
+                botella=self.botella_licor43_B,
+                peso_botella = 1212,
+            )
+
+        # Tomamos el ItemInspeccion y lo serializamos
+        serializer = ItemInspeccionDetalleSerializer(item_inspeccion_1)
+        #print('::: SERIALIZER DATA :::')
+        #print(serializer.data)
+
+        # Hacemos el request
+        payload = {
+            'inspeccion_id': inspeccion_1.id,
+            'sat_hash': self.botella_licor43_B.sat_hash
+            #'sat_hash': 'SsP6WkJ1AcGh0/0OHrOR9V5Qs05Ud+j65qa000'
+        }
+        url = reverse('inventarios:get-detalle-botella-inspeccion-post')
+        #print("//// URL:")
+        #print(url)
+        response = self.client.post(url, payload)
+        #json_response = json.dumps(response.data)
+
+        #print('::: RESPONSE DATA :::')
+        #print(response.data)
+        #print(json_response)
+
+        # Checamos que el request sea exitoso
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Checamos que los datos del response y los datos del serializer sean iguales
+        self.assertEqual(response.data, serializer.data)
+
     #-----------------------------------------------------------------------------
     def test_detalle_botella_inspeccion_decode_hash(self):
         """ Testear el endpoint 'detalle_botella_inspeccion' decodificando el sat_hash"""
@@ -1920,7 +1969,8 @@ class InspeccionesTests(TestCase):
         parametros = {
             'inspeccion_id': inspeccion_1.id,
             #'sat_hash': self.botella_licor43_B.sat_hash
-            'sat_hash': 'SsP6WkJ1AcGh0%2F0OHrOR9V5Qs05Ud%2Bj65qa000'
+            'sat_hash': 'SsP6WkJ1AcGh0%2F0OHrOR9V5Qs05Ud+j65qa000'
+            #'sat_hash': 'SsP6WkJ1AcGh0/0OHrOR9V5Qs05Ud+j65qa000'
         }
         url = reverse('inventarios:get-detalle-botella-inspeccion', kwargs=parametros)
         print("//// URL:")

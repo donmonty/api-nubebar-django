@@ -1072,7 +1072,8 @@ def detalle_botella_inspeccion_post(request):
     if request.method == 'POST':
 
         inspeccion_id = request.data['inspeccion_id']
-        sat_hash = request.data['sat_hash']
+        raw_hash = request.data['sat_hash']
+        sat_hash = raw_hash.replace("_", "/")
         
         #print("//// sat_hash:")
         #print(sat_hash)
@@ -2206,7 +2207,8 @@ def consultar_botella(request):
 
     if request.method == 'POST':
 
-        sat_hash = request.data['sat_hash']
+        raw_hash = request.data['sat_hash']
+        sat_hash = raw_hash.replace("_", "/")
 
         # Checamos que el folio esté registrado en la base de datos
         try:

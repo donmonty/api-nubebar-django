@@ -404,7 +404,9 @@ def get_botellas_merma(merma_id):
             When(Q(num_inspecciones__gt=1) & Q(inspecciones_peso_ok_count=None), then=F('peso_inicial')),
 
             # CASO: La botella tiene solo una inspeccion
-            When(Q(num_inspecciones=1), then=F('peso_inicial')), 
+            When(Q(num_inspecciones=1), then=F('peso_inicial')),
+
+            default = 'peso_inicial' 
 
         )
     )

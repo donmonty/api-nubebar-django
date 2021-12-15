@@ -1075,8 +1075,8 @@ def detalle_botella_inspeccion_post(request):
         raw_hash = request.data['sat_hash']
         sat_hash = raw_hash.replace("_", "/")
         
-        #print("//// sat_hash:")
-        #print(sat_hash)
+        print("//// sat_hash:")
+        print(sat_hash)
 
         # Si se trata de un folio custom, le adjuntamos el numero de la sucursal
         if re.match('^[0-9]*$', sat_hash):
@@ -1087,7 +1087,7 @@ def detalle_botella_inspeccion_post(request):
 
         # Checamos que la botella escaneada pertenezca a la Inspección en curso
         if models.ItemInspeccion.objects.filter(inspeccion__id=inspeccion_id, botella__sat_hash=sat_hash).exists():
-            #print("//// ItemInspeccion EXISTS!")
+            print("//// ItemInspeccion EXISTS!")
             item_inspeccion = models.ItemInspeccion.objects.get(inspeccion__id=inspeccion_id, botella__sat_hash=sat_hash)
              
             # Si la botella escaneada no ha sido inspeccionada, mostramos su ficha técnica
@@ -1099,9 +1099,21 @@ def detalle_botella_inspeccion_post(request):
             else:
                 return Response({'mensaje': 'Esta botella ya fue inspeccionada.'})
 
+        if models.ItemInspeccion.objects.filter(inspeccion__id=inspeccion_id, botella__folio=sat_hash).exists():
+            print("//// ItemInspeccion EXISTS!")
+            item_inspeccion = models.ItemInspeccion.objects.get(inspeccion__id=inspeccion_id, botella__folio=sat_hash)
+             
+            # Si la botella escaneada no ha sido inspeccionada, mostramos su ficha técnica
+            if item_inspeccion.inspeccionado == False:
+                serializer = serializers.ItemInspeccionDetalleSerializer(item_inspeccion)
+                return Response(serializer.data)
+            
+            # Si la botella ya fue inspecionada, notificamos al usuario
+            else:
+                return Response({'mensaje': 'Esta botella ya fue inspeccionada.'})
+
         # Si la botella no pertenece a la Inspección en curso, notificamos al usuario
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND, data={'mensaje': 'Esta botella no es parte de la inspeccion.'})
+        return Response(status=status.HTTP_404_NOT_FOUND, data={'mensaje': 'Esta botella no es parte de la inspeccion.'})
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -2213,17 +2225,18 @@ def consultar_botella(request):
         # Checamos que el folio esté registrado en la base de datos
         try:
             botella = models.Botella.objects.get(sat_hash=sat_hash)
-
-        except ObjectDoesNotExist:
-            mensaje = {'mensaje': 'Esta botella no está registrada en el inventario.'}
-            return Response(data=mensaje, status=status.HTTP_404_NOT_FOUND)
-
-        else:
-            botella = models.Botella.objects.get(sat_hash=sat_hash)
-
-            # Serializamos la botella
             serializer = serializers.BotellaConsultaSerializer(botella)
             return Response(serializer.data)
+
+        except ObjectDoesNotExist:
+            try:
+                botella = models.Botella.objects.get(folio=sat_hash)
+                serializer = serializers.BotellaConsultaSerializer(botella)
+                return Response(serializer.data)
+
+            except ObjectDoesNotExist:
+                mensaje = {'mensaje': 'Esta botella no está registrada en el inventario.'}
+                return Response(data=mensaje, status=status.HTTP_404_NOT_FOUND)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

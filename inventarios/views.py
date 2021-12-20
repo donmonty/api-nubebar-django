@@ -985,16 +985,29 @@ de inspecciones
 (Igual que el anterior pero en formato de función)
 -----------------------------------------------------------------------------
 """
-@api_view(['GET'],)
+@api_view(['POST'],)
 @permission_classes((IsAuthenticated,))
 @authentication_classes((TokenAuthentication,))
-def lista_inspecciones_botella(request, sat_hash):
+def lista_inspecciones_botella(request):
 
-    if request.method == 'GET':
+    if request.method == 'POST':
 
-        botella = get_object_or_404(models.Botella, sat_hash=sat_hash)
-        serializer = serializers.BotellaItemInspeccionSerializer(botella)
-        return Response(serializer.data)
+        raw_hash = request.data['sat_hash']
+        sat_hash = raw_hash.replace("_", "/")
+
+        try:
+            botella = models.Botella.objects.get(sat_hash=sat_hash)
+            serializer = serializers.BotellaItemInspeccionSerializer(botella)
+            return Response(serializer.data)
+
+        except ObjectDoesNotExist:
+            try:
+                botella = models.Botella.objects.get(folio=sat_hash)
+                serializer = serializers.BotellaItemInspeccionSerializer(botella)
+                return Response(serializer.data)
+
+            except ObjectDoesNotExist:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

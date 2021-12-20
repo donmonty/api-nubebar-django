@@ -1800,7 +1800,7 @@ class InspeccionesTests(TestCase):
             # ItemsInspeccion de la Inspeccion 1
             item_inspeccion_1 = models.ItemInspeccion.objects.create(
                 inspeccion=inspeccion_1,
-                botella=self.botella_licor43,
+                botella=self.botella_licor43_B,
                 peso_botella = 1212,
                 inspeccionado=True
             )
@@ -1819,19 +1819,20 @@ class InspeccionesTests(TestCase):
             # ItemsInspeccion de la Inspeccion 2
             item_inspeccion_2 = models.ItemInspeccion.objects.create(
                 inspeccion=inspeccion_2,
-                botella=self.botella_licor43,
+                botella=self.botella_licor43_B,
                 peso_botella = 1000,
                 inspeccionado=True
             )
 
         # Tomamos nuestra botella y su historial y lo serializamos
-        serializer = BotellaItemInspeccionSerializer(self.botella_licor43)
+        serializer = BotellaItemInspeccionSerializer(self.botella_licor43_B)
         #print('::: SERIALIZER DATA - BOTELLA ITEMS INSPECCION :::')
         #print(serializer.data)
 
         # Hacemos el request
-        url = reverse('inventarios:get-inspecciones-botella', args=[self.botella_licor43.sat_hash])
-        response = self.client.get(url)
+        url = reverse('inventarios:get-inspecciones-botella')
+        payload = {'sat_hash': self.botella_licor43_B.sat_hash}
+        response = self.client.post(url, payload)
         # json_response = json.dumps(response.data)
         #print('::: RESPONSE DATA :::')
         #print(response.data)

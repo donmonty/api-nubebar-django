@@ -110,8 +110,8 @@ def calcular_consumos_2(inspeccion, fecha_inicial, fecha_final):
             When(Q(estado='0'), then=ExpressionWrapper(Value('SIN LIQUIDO'), output_field=CharField()))
         )
     )
-    print('::: BOTELLAS - ESTADO :::')
-    print(botellas_estado.values('folio', 'producto__ingrediente__nombre', 'estado_botella'))
+    #print('::: BOTELLAS - ESTADO :::')
+    #print(botellas_estado.values('folio', 'producto__ingrediente__nombre', 'estado_botella'))
 
     #---------------------------------------------------------------------
     # Agregamos el número de inspecciones de cada botella
@@ -125,22 +125,22 @@ def calcular_consumos_2(inspeccion, fecha_inicial, fecha_final):
     # Agregamos 'inspeccion_none_count': el numero de inspecciones con 'peso_botella' = None
     botellas_inspeccion_none = botellas_inspecciones_peso_ok.annotate(inspeccion_none_count=ExpressionWrapper(sq_peso_botella_none, output_field=IntegerField()))
 
-    print('::: BOTELLAS - NONE COUNT :::')
-    print(botellas_inspeccion_none.values('folio', 'producto__ingrediente__nombre', 'inspeccion_none_count'))
+    #print('::: BOTELLAS - NONE COUNT :::')
+    #print(botellas_inspeccion_none.values('folio', 'producto__ingrediente__nombre', 'inspeccion_none_count'))
 
     #---------------------------------------------------------------------
     # Agregamos 'fecha_inspeccion_none': la fecha de la inspeccion cuyo 'peso_botella' = None
     botellas_fecha_inspeccion_none = botellas_inspeccion_none.annotate(fecha_inspeccion_none=ExpressionWrapper(sq_fecha_inspeccion_none, output_field=DateTimeField()))
 
-    print('::: BOTELLAS - FECHA INSPECCION NONE :::')
-    print(botellas_fecha_inspeccion_none.values('folio', 'fecha_inspeccion_none'))
+    #print('::: BOTELLAS - FECHA INSPECCION NONE :::')
+    #print(botellas_fecha_inspeccion_none.values('folio', 'fecha_inspeccion_none'))
 
     #---------------------------------------------------------------------
     # Agregamos 'fecha_inspeccion_ok' la fecha de la inspeccion cuyo 'peso_botella' = OK
     botellas_fecha_inspeccion_ok = botellas_fecha_inspeccion_none.annotate(fecha_inspeccion_ok=ExpressionWrapper(sq_fecha_inspeccion_ok, output_field=DateTimeField()))
 
-    print('::: BOTELLAS - FECHA INSPECCION OK :::')
-    print(botellas_fecha_inspeccion_ok.values('folio', 'fecha_inspeccion_ok'))
+    #print('::: BOTELLAS - FECHA INSPECCION OK :::')
+    #print(botellas_fecha_inspeccion_ok.values('folio', 'fecha_inspeccion_ok'))
 
     #---------------------------------------------------------------------
     # Agregamos el 'peso_anterior' de la botella. 
@@ -168,8 +168,8 @@ def calcular_consumos_2(inspeccion, fecha_inicial, fecha_final):
 
         )
     )
-    print('::: BOTELLAS - PESO ANTERIOR :::')
-    print(botellas_peso_anterior.values('folio', 'producto__ingrediente__nombre', 'peso_anterior'))
+    #print('::: BOTELLAS - PESO ANTERIOR :::')
+    #print(botellas_peso_anterior.values('folio', 'producto__ingrediente__nombre', 'peso_anterior'))
 
     #---------------------------------------------------------------------
     # Agregamos 'volumen_actual'
@@ -202,8 +202,8 @@ def calcular_consumos_2(inspeccion, fecha_inicial, fecha_final):
     diferencia_total_ml = botellas_diferencia_ml.aggregate(Sum('diferencia_ml'))
     diferencia_total_ml = round(float(diferencia_total_ml['diferencia_ml__sum'].quantize(Decimal('.01'), rounding=ROUND_UP)))
 
-    print('::: BOTELLAS - DIFERENCIA TOTAL ML :::')
-    print(diferencia_total_ml)
+    #print('::: BOTELLAS - DIFERENCIA TOTAL ML :::')
+    #print(diferencia_total_ml)
 
     """
     -----------------------------------------------------------------

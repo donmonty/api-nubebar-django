@@ -626,7 +626,7 @@ def get_botellas_merma(merma_id):
 
             # CASO: La botella tiene 2 inspecciones, la más reciente tiene 'peso_botella' = OK
             #When(Q(num_inspecciones=2) & Q(inspecciones_none_check=True) & Q(fecha_inspeccion_none__lt=F('fecha_inspeccion_ok')), then=F('peso_inicial')),
-            When(Q(num_inspecciones=2) & Q(inspeccion_none_count=1) & Q(fecha_inspeccion_none__lt=F('fecha_inspeccion_ok')), then=F('sq_peso_anterior')),
+            When(Q(num_inspecciones=2) & Q(inspeccion_none_count=1) & Q(fecha_inspeccion_none__lt=F('fecha_inspeccion_ok')), then=(sq_peso_anterior)),
 
             # CASO: La botella tiene más de 2 inspecciones, al menos una tiene 'peso_botella' OK
             When(Q(num_inspecciones__gt=2) & Q(inspecciones_peso_ok_count__gte=1), then=(sq_peso_anterior)),

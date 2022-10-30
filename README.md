@@ -1,16 +1,14 @@
 # NubeBar API
 
-NubeBar is a SaaS app that helps bars and restaurants manage their alcohol inventory with ease and maximum precision in order to avoid theft and boost revenue. For most bars and restaurants alcohol sales represent 40% or more of total sales. Alcohol also has the highest margins and is the most valuable inventory. Despite this, most businesses manage their alcohol inventory using manual, time-consuming methods that make inventory control a big challenge. NubeBar solves this problem.
+NubeBar is a mobile app that helps bars and restaurants manage their alcohol inventory with ease and maximum precision in order to avoid theft and boost revenue. For most bars and restaurants alcohol sales represent 40% or more of total sales. Alcohol also has the highest margins and is the most valuable inventory. Despite this, most businesses manage their alcohol inventory using manual, time-consuming methods that make inventory control a big challenge. NubeBar solves this problem.
 
 ## Tech Stack
 
 I built the entire backend using the following tech stack:
 
-- Python
 - Django
 - Django REST Framework
 - Postgres
-- Docker containers for testing
 
 ## Features
 
